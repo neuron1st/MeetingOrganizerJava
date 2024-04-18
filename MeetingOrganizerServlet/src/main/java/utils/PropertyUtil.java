@@ -1,8 +1,11 @@
 package utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.util.Properties;
 
+@UtilityClass
 public class PropertyUtil {
     private static final Properties PROPERTIES = new Properties();
 
