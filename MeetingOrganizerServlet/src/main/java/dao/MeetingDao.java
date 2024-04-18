@@ -50,7 +50,7 @@ public class MeetingDao implements Dao<Long, Meeting> {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_MEETINGS, Statement.RETURN_GENERATED_KEYS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 meetings.add(mapResultSetToMeeting(resultSet));
             }
 
@@ -68,7 +68,7 @@ public class MeetingDao implements Dao<Long, Meeting> {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 return Optional.of(mapResultSetToMeeting(resultSet));
             } else {
                 return Optional.empty();

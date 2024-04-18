@@ -18,6 +18,8 @@ public class ParticipantDao implements Dao<Long, Participant> {
     private static final String ADD_PARTICIPANT = "INSERT INTO participants (meeting_id, user_id, role) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_PARTICIPANTS = "SELECT * FROM participants";
+    private static final String GET_ALL_BY_MEETING_ID = "SELECT * FROM participants WHERE meeting_id = ?";
+    private static final String GET_ALL_BY_USER_ID = "SELECT * FROM participants WHERE user_id = ?";
     private static final String GET_PARTICIPANT_BY_ID = "SELECT * FROM participants WHERE meeting_id = ? AND user_id = ?";
     private static final String UPDATE_PARTICIPANT = "UPDATE participants " +
             "SET role = ? " +
@@ -53,7 +55,7 @@ public class ParticipantDao implements Dao<Long, Participant> {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_PARTICIPANTS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 participants.add(mapResultSetToParticipant(resultSet));
             }
 
@@ -63,9 +65,46 @@ public class ParticipantDao implements Dao<Long, Participant> {
         return participants;
     }
 
+    public List<Participant> getAllByMeetingId(Long meetingId) {
+        List<Participant> participants = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_MEETING_ID)) {
+
+            preparedStatement.setLong(1, meetingId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                participants.add(mapResultSetToParticipant(resultSet));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get participants", e);
+        }
+        return participants;
+    }
+
+    public List<Participant> getAllByUserId(Long userId) {
+        List<Participant> participants = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_USER_ID)) {
+
+            preparedStatement.setLong(1, userId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                participants.add(mapResultSetToParticipant(resultSet));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get participants", e);
+        }
+        return participants;
+    }
+
     @Override
     public Optional<Participant> getById(Long id) {
-        throw new UnsupportedOperationException("Getting a participant by ID is not supported. Use the composite key (meeting_id, user_id).");
+        throw new UnsupportedOperationException("Getting a participant by ID is not supported. " +
+                "Use the composite key (meeting_id, user_id).");
     }
 
     public Optional<Participant> getById(Long meetingId, Long userId) {
@@ -102,7 +141,8 @@ public class ParticipantDao implements Dao<Long, Participant> {
 
     @Override
     public boolean delete(Long id) {
-        throw new UnsupportedOperationException("Deleting a participant by ID is not supported. Use the composite key (meeting_id, user_id).");
+        throw new UnsupportedOperationException("Deleting a participant by ID is not supported. " +
+                "Use the composite key (meeting_id, user_id).");
     }
 
     public boolean delete(Long meetingId, Long userId) {

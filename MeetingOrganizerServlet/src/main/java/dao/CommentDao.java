@@ -19,6 +19,7 @@ public class CommentDao implements Dao<Long, Comment> {
     private static final String CREATE_COMMENT = "INSERT INTO comments (text, creation_date, user_id, meeting_id) " +
             "VALUES (?, ?, ?, ?)";
     private static final String GET_ALL_COMMENTS = "SELECT * FROM comments";
+    private static final String GET_ALL_BY_MEETING_ID = "SELECT * FROM comments WHERE meeting_id = ?";
     private static final String GET_COMMENT_BY_ID = "SELECT * FROM comments WHERE comment_id = ?";
     private static final String UPDATE_COMMENT = "UPDATE comments " +
             "SET text = ?, creation_date = ?, user_id = ?, meeting_id = ? " +
@@ -59,7 +60,25 @@ public class CommentDao implements Dao<Long, Comment> {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_COMMENTS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
+                comments.add(mapResultSetToComment(resultSet));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get all comments", e);
+        }
+        return comments;
+    }
+
+    public List<Comment> getAllByMeetingId(Long meetingId) {
+        List<Comment> comments = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_MEETING_ID)) {
+
+            preparedStatement.setLong(1, meetingId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
                 comments.add(mapResultSetToComment(resultSet));
             }
 
@@ -77,7 +96,7 @@ public class CommentDao implements Dao<Long, Comment> {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 return Optional.of(mapResultSetToComment(resultSet));
             } else {
                 return Optional.empty();

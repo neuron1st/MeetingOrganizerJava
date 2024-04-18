@@ -49,7 +49,7 @@ public class UserDao implements Dao<Long, User> {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 users.add(mapResultSetToUser(resultSet));
             }
 
@@ -67,7 +67,7 @@ public class UserDao implements Dao<Long, User> {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 return Optional.of(mapResultSetToUser(resultSet));
             } else {
                 return Optional.empty();
