@@ -1,8 +1,6 @@
 package dao;
 
-import entity.Comment;
 import entity.CommentLike;
-import entity.User;
 import utils.ConnectionManager;
 
 import java.sql.Connection;

@@ -68,6 +68,25 @@ public class ParticipantDao implements Dao<Long, Participant> {
         throw new UnsupportedOperationException("Getting a participant by ID is not supported. Use the composite key (meeting_id, user_id).");
     }
 
+    public Optional<Participant> getById(Long meetingId, Long userId) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_PARTICIPANT_BY_ID)) {
+
+            preparedStatement.setLong(1, meetingId);
+            preparedStatement.setLong(2, userId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToParticipant(resultSet));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get participant by id", e);
+        }
+    }
+
+
     @Override
     public boolean update(Participant participant) {
         try (Connection connection = ConnectionManager.getConnection();
@@ -85,6 +104,20 @@ public class ParticipantDao implements Dao<Long, Participant> {
     public boolean delete(Long id) {
         throw new UnsupportedOperationException("Deleting a participant by ID is not supported. Use the composite key (meeting_id, user_id).");
     }
+
+    public boolean delete(Long meetingId, Long userId) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PARTICIPANT)) {
+
+            preparedStatement.setLong(1, meetingId);
+            preparedStatement.setLong(2, userId);
+
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete participant", e);
+        }
+    }
+
 
     private void setStatement(Participant participant, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setLong(1, participant.getMeeting().getMeetingId());
