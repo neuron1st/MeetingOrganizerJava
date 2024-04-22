@@ -37,6 +37,22 @@ public class MeetingService {
         return models;
     }
 
+    public List<MeetingModel> getByTitle(String title) {
+        List<MeetingModel> models = meetingDao.getByTitle(title)
+                .stream()
+                .map(meetingMapper::map)
+                .toList();
+
+        for (MeetingModel model : models) {
+            model.setLikeCount(meetingLikeDao.getLikesCount(model.getMeetingId()));
+            model.setCommentCount(commentDao.getAllByMeetingId(model.getMeetingId()).size());
+            model.setParticipantCount(participantDao.getAllByMeetingId(model.getMeetingId()).size());
+        }
+
+        return models;
+    }
+
+
     public Optional<MeetingModel> getById(Long meetingId) {
         MeetingModel model = meetingDao.getById(meetingId)
                 .map(meetingMapper::map)

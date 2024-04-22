@@ -31,6 +31,19 @@ public class CommentService {
         return models;
     }
 
+    public List<CommentModel> getByMeetingId(Long meetingId) {
+        List<CommentModel> models = commentDao.getAllByMeetingId(meetingId)
+                .stream()
+                .map(commentMapper::map)
+                .toList();
+
+        for (CommentModel model : models) {
+            model.setLikeCount(commentLikeDao.getLikesCount(model.getCommentId()));
+        }
+
+        return models;
+    }
+
     public Optional<CommentModel> getById(Long commentId) {
         CommentModel model = commentDao.getById(commentId)
                 .map(commentMapper::map)

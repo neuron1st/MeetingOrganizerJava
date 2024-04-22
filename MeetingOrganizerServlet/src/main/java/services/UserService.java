@@ -3,7 +3,6 @@ package services;
 import dao.UserDao;
 import dto.user.CreateUserModel;
 import dto.user.UserModel;
-import entity.User;
 import mappers.user.CreateUserMapper;
 import mappers.user.UserMapper;
 import utils.DaoManager;
@@ -35,7 +34,31 @@ public class UserService {
         return Optional.of(model);
     }
 
-    public UserModel create(CreateUserModel createModel) {
+    public Optional<UserModel> getByEmail(String email) {
+        UserModel model = userDao.getByEmail(email)
+                .map(userMapper::map)
+                .orElse(null);
+
+        if (model == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(model);
+    }
+
+    public Optional<String> checkLogin(String email, String password) {
+        UserModel model = userDao.getByEmailAndPassword(email, password)
+                .map(userMapper::map)
+                .orElse(null);
+
+        if (model == null) {
+            return Optional.of("Incorrect email or password");
+        }
+
+        return Optional.empty();
+    }
+
+    public UserModel create(CreateUserModel createModel) throws IllegalArgumentException {
         return userMapper.map(userDao.create(createUserMapper.map(createModel)));
     }
 

@@ -22,6 +22,7 @@ public class MeetingDao implements Dao<Long, Meeting> {
             "SET title = ?, description = ?, event_date = ? " +
             "WHERE meeting_id = ?";
     private static final String DELETE_MEETING = "DELETE FROM meetings WHERE meeting_id = ?";
+    private static final String GET_BY_TITLE = "SELECT * FROM meetings WHERE title LIKE ?";
 
     @Override
     public Meeting create(Meeting meeting) {
@@ -56,6 +57,21 @@ public class MeetingDao implements Dao<Long, Meeting> {
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get all meetings", e);
+        }
+        return meetings;
+    }
+
+    public List<Meeting> getByTitle(String title) {
+        List<Meeting> meetings = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_BY_TITLE, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "%" + title + "%");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                meetings.add(mapResultSetToMeeting(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get meetings", e);
         }
         return meetings;
     }
