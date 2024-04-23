@@ -1,4 +1,4 @@
-package dao;
+package repositories;
 
 import entity.Meeting;
 import entity.Participant;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ParticipantDao implements Dao<Long, Participant> {
+public class ParticipantRepository implements Repository<Long, Participant> {
     private static final String ADD_PARTICIPANT = "INSERT INTO participants (meeting_id, user_id, role) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_PARTICIPANTS = "SELECT * FROM participants";
@@ -25,10 +25,10 @@ public class ParticipantDao implements Dao<Long, Participant> {
             "SET role = ? " +
             "WHERE meeting_id = ? AND user_id = ?";
     private static final String DELETE_PARTICIPANT = "DELETE FROM participants WHERE meeting_id = ? AND user_id = ?";
-    private final UserDao userDao;
-    private final MeetingDao meetingDao;
+    private final UserRepository userDao;
+    private final MeetingRepository meetingDao;
 
-    public ParticipantDao(UserDao userDao, MeetingDao meetingDao) {
+    public ParticipantRepository(UserRepository userDao, MeetingRepository meetingDao) {
         this.userDao = userDao;
         this.meetingDao = meetingDao;
     }

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 import static utils.UrlPathGetter.*;
 
-@WebServlet(CREATE_COMMENT)
+@WebServlet(MEETINGS + CREATE_COMMENT)
 public class CreateCommentServlet extends HttpServlet {
     private final CommentService commentService = new CommentService();
 
@@ -26,11 +26,7 @@ public class CreateCommentServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Object currentUserObject = request.getSession().getAttribute("user");
-        if (!(currentUserObject instanceof UserModel currentUser)) {
-            response.sendRedirect(request.getContextPath() + LOGIN);
-            return;
-        }
+        UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
         String text = request.getParameter("text");
         Long meetingId = Long.parseLong(request.getParameter("meetingId"));
 
@@ -41,7 +37,7 @@ public class CreateCommentServlet extends HttpServlet {
                 .meetingId(meetingId)
                 .build();
 
-        CommentModel commentModel = commentService.create(createModel);
+        commentService.create(createModel);
         response.sendRedirect(request.getContextPath() + MEETINGS + DETAILS + "?id=" + meetingId);
     }
 }

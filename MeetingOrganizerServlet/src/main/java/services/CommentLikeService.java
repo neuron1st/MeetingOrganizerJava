@@ -1,30 +1,30 @@
 package services;
 
-import dao.CommentDao;
-import dao.CommentLikeDao;
-import dao.UserDao;
+import repositories.CommentRepository;
+import repositories.CommentLikeRepository;
+import repositories.UserRepository;
 import entity.CommentLike;
-import utils.DaoManager;
+import utils.RepositoryManager;
 
 public class CommentLikeService {
-    private final CommentLikeDao commentLikeDao = DaoManager.getCommentLikeDao();
-    private final UserDao userDao = DaoManager.getUserDao();
-    private final CommentDao commentDao = DaoManager.getCommentDao();
+    private final CommentLikeRepository commentLikeRepository = RepositoryManager.getCommentLikeRepository();
+    private final UserRepository userRepository = RepositoryManager.getUserRepository();
+    private final CommentRepository commentRepository = RepositoryManager.getCommentRepository();
 
     public void addLike(Long userId, Long commentId) {
-        commentLikeDao.create(CommentLike.builder()
-                .user(userDao.getById(userId)
+        commentLikeRepository.create(CommentLike.builder()
+                .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
-                .comment(commentDao.getById(commentId)
+                .comment(commentRepository.getById(commentId)
                         .orElseThrow(() -> new RuntimeException("Comment not found with ID: " + commentId)))
                 .build());
     }
 
     public boolean removeLike(Long userId, Long commentId) {
-        return commentLikeDao.delete(CommentLike.builder()
-                .user(userDao.getById(userId)
+        return commentLikeRepository.delete(CommentLike.builder()
+                .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
-                .comment(commentDao.getById(commentId)
+                .comment(commentRepository.getById(commentId)
                         .orElseThrow(() -> new RuntimeException("Comment not found with ID: " + commentId)))
                 .build());
     }

@@ -1,4 +1,4 @@
-package dao;
+package repositories;
 
 import entity.MeetingLike;
 import utils.ConnectionManager;
@@ -7,10 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
-public class MeetingLikeDao {
+public class MeetingLikeRepository {
     private static final String ADD_LIKE = "INSERT INTO meeting_likes (meeting_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE = "DELETE FROM meeting_likes WHERE meeting_id = ? AND user_id = ?";
     private static final String GET_LIKES_COUNT = "SELECT COUNT(*) FROM meeting_likes WHERE meeting_id = ?";

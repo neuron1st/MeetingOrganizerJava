@@ -10,19 +10,15 @@ import services.CommentLikeService;
 import java.io.IOException;
 
 import static utils.UrlPathGetter.CREATE_COMMENT_LIKE;
-import static utils.UrlPathGetter.LOGIN;
+import static utils.UrlPathGetter.MEETINGS;
 
-@WebServlet(CREATE_COMMENT_LIKE)
+@WebServlet(MEETINGS + CREATE_COMMENT_LIKE)
 public class CreateCommentLikeServlet extends HttpServlet {
     private final CommentLikeService commentLikeService = new CommentLikeService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object currentUserObject = request.getSession().getAttribute("user");
-        if (!(currentUserObject instanceof UserModel currentUser)) {
-            response.sendRedirect(request.getContextPath() + LOGIN);
-            return;
-        }
+        UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
         Long userId = currentUser.getUserId();
         Long commentId = Long.parseLong(request.getParameter("commentId"));
         commentLikeService.addLike(userId, commentId);

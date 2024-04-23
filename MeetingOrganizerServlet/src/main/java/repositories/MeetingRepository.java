@@ -1,4 +1,4 @@
-package dao;
+package repositories;
 
 import entity.Meeting;
 import utils.ConnectionManager;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MeetingDao implements Dao<Long, Meeting> {
+public class MeetingRepository implements Repository<Long, Meeting> {
     private static final String CREATE_MEETING = "INSERT INTO meetings (title, description, event_date) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_MEETINGS = "SELECT * FROM meetings";

@@ -1,4 +1,4 @@
-package dao;
+package repositories;
 
 import entity.User;
 import utils.ConnectionManager;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDao implements Dao<Long, User> {
+public class UserRepository implements Repository<Long, User> {
     private static final String CREATE_USER = "INSERT INTO users (name, email, password) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_USERS = "SELECT * FROM users";

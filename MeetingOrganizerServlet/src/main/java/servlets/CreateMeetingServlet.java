@@ -3,7 +3,6 @@ package servlets;
 import dto.meeting.CreateMeetingModel;
 import dto.meeting.MeetingModel;
 import dto.participant.CreateParticipantModel;
-import dto.participant.ParticipantModel;
 import dto.user.UserModel;
 import entity.Role;
 import jakarta.servlet.ServletException;
@@ -18,9 +17,11 @@ import utils.JspPathCreator;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static utils.UrlPathGetter.*;
+import static utils.UrlPathGetter.CREATE_MEETING;
+import static utils.UrlPathGetter.DETAILS;
+import static utils.UrlPathGetter.MEETINGS;
 
-@WebServlet(CREATE_MEETING)
+@WebServlet(MEETINGS + CREATE_MEETING)
 public class CreateMeetingServlet extends HttpServlet {
     private final MeetingService meetingService = new MeetingService();
     private final ParticipantService participantService = new ParticipantService();
@@ -32,12 +33,6 @@ public class CreateMeetingServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object currentUserObject = request.getSession().getAttribute("user");
-        if (!(currentUserObject instanceof UserModel currentUser)) {
-            response.sendRedirect(request.getContextPath() + LOGIN);
-            return;
-        }
-
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         LocalDateTime date = LocalDateTime.parse(request.getParameter("date"));
@@ -51,7 +46,7 @@ public class CreateMeetingServlet extends HttpServlet {
         MeetingModel meetingModel = meetingService.create(createModel);
 
         CreateParticipantModel participantModel = CreateParticipantModel.builder()
-                .userId(currentUser.getUserId())
+                .userId(((UserModel)request.getSession().getAttribute("user")).getUserId())
                 .meetingId(meetingModel.getMeetingId())
                 .role(Role.Admin)
                 .build();

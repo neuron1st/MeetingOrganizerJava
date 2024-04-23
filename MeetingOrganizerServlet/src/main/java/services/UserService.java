@@ -1,29 +1,29 @@
 package services;
 
-import dao.UserDao;
+import repositories.UserRepository;
 import dto.user.CreateUserModel;
 import dto.user.UserModel;
 import mappers.user.CreateUserMapper;
 import mappers.user.UserMapper;
-import utils.DaoManager;
+import utils.RepositoryManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserService {
-    private final UserDao userDao = DaoManager.getUserDao();
+    private final UserRepository userRepository = RepositoryManager.getUserRepository();
     private final UserMapper userMapper = new UserMapper();
     private final CreateUserMapper createUserMapper = new CreateUserMapper();
 
     public List<UserModel> getAll() {
-        return userDao.getAll()
+        return userRepository.getAll()
                 .stream()
                 .map(userMapper::map)
                 .toList();
     }
 
     public Optional<UserModel> getById(Long userId) {
-        UserModel model = userDao.getById(userId)
+        UserModel model = userRepository.getById(userId)
                 .map(userMapper::map)
                 .orElse(null);
 
@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public Optional<UserModel> getByEmail(String email) {
-        UserModel model = userDao.getByEmail(email)
+        UserModel model = userRepository.getByEmail(email)
                 .map(userMapper::map)
                 .orElse(null);
 
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public Optional<String> checkLogin(String email, String password) {
-        UserModel model = userDao.getByEmailAndPassword(email, password)
+        UserModel model = userRepository.getByEmailAndPassword(email, password)
                 .map(userMapper::map)
                 .orElse(null);
 
@@ -59,14 +59,14 @@ public class UserService {
     }
 
     public UserModel create(CreateUserModel createModel) throws IllegalArgumentException {
-        return userMapper.map(userDao.create(createUserMapper.map(createModel)));
+        return userMapper.map(userRepository.create(createUserMapper.map(createModel)));
     }
 
     public boolean update(CreateUserModel createModel) {
-        return userDao.update(createUserMapper.map(createModel));
+        return userRepository.update(createUserMapper.map(createModel));
     }
 
-    private boolean delete(Long userId) {
-        return userDao.delete(userId);
+    public boolean delete(Long userId) {
+        return userRepository.delete(userId);
     }
 }

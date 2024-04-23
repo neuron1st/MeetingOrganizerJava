@@ -1,24 +1,24 @@
 package mappers.comment;
 
-import dao.MeetingDao;
-import dao.UserDao;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 import dto.comment.CreateCommentModel;
 import entity.Comment;
 import entity.Meeting;
 import entity.User;
 import mappers.BaseMapper;
-import utils.DaoManager;
+import utils.RepositoryManager;
 
 public class CreateCommentMapper implements BaseMapper<CreateCommentModel, Comment> {
-    private final UserDao userDao = DaoManager.getUserDao();
-    private final MeetingDao meetingDao = DaoManager.getMeetingDao();
+    private final UserRepository userRepository = RepositoryManager.getUserRepository();
+    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
 
     @Override
     public Comment map(CreateCommentModel source) {
-        User user = userDao
+        User user = userRepository
                 .getById(source.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Meeting meeting = meetingDao
+        Meeting meeting = meetingRepository
                 .getById(source.getMeetingId())
                 .orElseThrow(() -> new IllegalArgumentException("Meeting not found"));
 

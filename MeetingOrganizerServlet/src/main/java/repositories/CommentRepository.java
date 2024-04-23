@@ -1,4 +1,4 @@
-package dao;
+package repositories;
 
 import entity.Comment;
 import entity.Meeting;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CommentDao implements Dao<Long, Comment> {
+public class CommentRepository implements Repository<Long, Comment> {
     private static final String CREATE_COMMENT = "INSERT INTO comments (text, creation_date, user_id, meeting_id) " +
             "VALUES (?, ?, ?, ?)";
     private static final String GET_ALL_COMMENTS = "SELECT * FROM comments";
@@ -25,10 +25,10 @@ public class CommentDao implements Dao<Long, Comment> {
             "SET text = ?, creation_date = ?, user_id = ?, meeting_id = ? " +
             "WHERE comment_id = ?";
     private static final String DELETE_COMMENT = "DELETE FROM comments WHERE comment_id = ?";
-    private final UserDao userDao;
-    private final MeetingDao meetingDao;
+    private final UserRepository userDao;
+    private final MeetingRepository meetingDao;
 
-    public CommentDao(UserDao userDao, MeetingDao meetingDao) {
+    public CommentRepository(UserRepository userDao, MeetingRepository meetingDao) {
         this.userDao = userDao;
         this.meetingDao = meetingDao;
     }

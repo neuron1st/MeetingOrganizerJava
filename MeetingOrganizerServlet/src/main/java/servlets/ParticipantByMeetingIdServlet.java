@@ -1,14 +1,11 @@
 package servlets;
 
-import dto.meeting.MeetingModel;
 import dto.participant.ParticipantModel;
-import entity.Participant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import services.MeetingService;
 import services.ParticipantService;
 import utils.JspPathCreator;
 

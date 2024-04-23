@@ -9,19 +9,14 @@ import services.MeetingLikeService;
 
 import java.io.IOException;
 
-import static utils.UrlPathGetter.DELETE_MEETING_LIKE;
-import static utils.UrlPathGetter.LOGIN;
+import static utils.UrlPathGetter.*;
 
-@WebServlet(DELETE_MEETING_LIKE)
+@WebServlet(MEETINGS + DELETE_MEETING_LIKE)
 public class DeleteMeetingLikeServlet extends HttpServlet {
     private final MeetingLikeService meetingLikeService = new MeetingLikeService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object currentUserObject = request.getSession().getAttribute("user");
-        if (!(currentUserObject instanceof UserModel currentUser)) {
-            response.sendRedirect(request.getContextPath() + LOGIN);
-            return;
-        }
+        UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
         Long userId = currentUser.getUserId();
         Long meetingId = Long.valueOf(request.getParameter("meetingId"));
         meetingLikeService.removeLike(userId, meetingId);

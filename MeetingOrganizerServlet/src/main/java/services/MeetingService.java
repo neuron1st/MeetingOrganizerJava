@@ -1,52 +1,52 @@
 package services;
 
-import dao.CommentDao;
-import dao.MeetingDao;
-import dao.MeetingLikeDao;
-import dao.ParticipantDao;
+import repositories.CommentRepository;
+import repositories.MeetingRepository;
+import repositories.MeetingLikeRepository;
+import repositories.ParticipantRepository;
 import dto.meeting.CreateMeetingModel;
 import dto.meeting.MeetingModel;
 import mappers.meeting.CreateMeetingMapper;
 import mappers.meeting.MeetingMapper;
-import utils.DaoManager;
+import utils.RepositoryManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class MeetingService {
-    private final MeetingDao meetingDao = DaoManager.getMeetingDao();
-    private final CommentDao commentDao = DaoManager.getCommentDao();
-    private final ParticipantDao participantDao = DaoManager.getParticipantDao();
-    private final MeetingLikeDao meetingLikeDao = DaoManager.getMeetingLikeDao();
+    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
+    private final CommentRepository commentRepository = RepositoryManager.getCommentRepository();
+    private final ParticipantRepository participantRepository = RepositoryManager.getParticipantRepository();
+    private final MeetingLikeRepository meetingLikeRepository = RepositoryManager.getMeetingLikeRepository();
 
     private final MeetingMapper meetingMapper = new MeetingMapper();
     private final CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();
 
     public List<MeetingModel> getAll() {
-        List<MeetingModel> models = meetingDao.getAll()
+        List<MeetingModel> models = meetingRepository.getAll()
                 .stream()
                 .map(meetingMapper::map)
                 .toList();
 
         for (MeetingModel model : models) {
-            model.setLikeCount(meetingLikeDao.getLikesCount(model.getMeetingId()));
-            model.setCommentCount(commentDao.getAllByMeetingId(model.getMeetingId()).size());
-            model.setParticipantCount(participantDao.getAllByMeetingId(model.getMeetingId()).size());
+            model.setLikeCount(meetingLikeRepository.getLikesCount(model.getMeetingId()));
+            model.setCommentCount(commentRepository.getAllByMeetingId(model.getMeetingId()).size());
+            model.setParticipantCount(participantRepository.getAllByMeetingId(model.getMeetingId()).size());
         }
 
         return models;
     }
 
     public List<MeetingModel> getByTitle(String title) {
-        List<MeetingModel> models = meetingDao.getByTitle(title)
+        List<MeetingModel> models = meetingRepository.getByTitle(title)
                 .stream()
                 .map(meetingMapper::map)
                 .toList();
 
         for (MeetingModel model : models) {
-            model.setLikeCount(meetingLikeDao.getLikesCount(model.getMeetingId()));
-            model.setCommentCount(commentDao.getAllByMeetingId(model.getMeetingId()).size());
-            model.setParticipantCount(participantDao.getAllByMeetingId(model.getMeetingId()).size());
+            model.setLikeCount(meetingLikeRepository.getLikesCount(model.getMeetingId()));
+            model.setCommentCount(commentRepository.getAllByMeetingId(model.getMeetingId()).size());
+            model.setParticipantCount(participantRepository.getAllByMeetingId(model.getMeetingId()).size());
         }
 
         return models;
@@ -54,7 +54,7 @@ public class MeetingService {
 
 
     public Optional<MeetingModel> getById(Long meetingId) {
-        MeetingModel model = meetingDao.getById(meetingId)
+        MeetingModel model = meetingRepository.getById(meetingId)
                 .map(meetingMapper::map)
                 .orElse(null);
 
@@ -62,22 +62,22 @@ public class MeetingService {
             return Optional.empty();
         }
 
-        model.setLikeCount(meetingLikeDao.getLikesCount(model.getMeetingId()));
-        model.setCommentCount(commentDao.getAllByMeetingId(model.getMeetingId()).size());
-        model.setParticipantCount(participantDao.getAllByMeetingId(model.getMeetingId()).size());
+        model.setLikeCount(meetingLikeRepository.getLikesCount(model.getMeetingId()));
+        model.setCommentCount(commentRepository.getAllByMeetingId(model.getMeetingId()).size());
+        model.setParticipantCount(participantRepository.getAllByMeetingId(model.getMeetingId()).size());
 
         return Optional.of(model);
     }
 
     public MeetingModel create(CreateMeetingModel createModel) {
-        return meetingMapper.map(meetingDao.create(createMeetingMapper.map(createModel)));
+        return meetingMapper.map(meetingRepository.create(createMeetingMapper.map(createModel)));
     }
 
     public boolean update(CreateMeetingModel createModel) {
-        return meetingDao.update(createMeetingMapper.map(createModel));
+        return meetingRepository.update(createMeetingMapper.map(createModel));
     }
 
     public boolean delete(Long meetingId) {
-        return meetingDao.delete(meetingId);
+        return meetingRepository.delete(meetingId);
     }
 }
