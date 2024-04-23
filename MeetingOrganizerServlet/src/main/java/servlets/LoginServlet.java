@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import services.UserService;
 import utils.JspPathCreator;
+import utils.PasswordHash;
 
 import java.io.IOException;
 import java.util.Objects;

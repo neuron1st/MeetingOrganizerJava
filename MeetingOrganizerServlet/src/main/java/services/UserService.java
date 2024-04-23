@@ -1,10 +1,12 @@
 package services;
 
+import entity.User;
 import repositories.UserRepository;
 import dto.user.CreateUserModel;
 import dto.user.UserModel;
 import mappers.user.CreateUserMapper;
 import mappers.user.UserMapper;
+import utils.PasswordHash;
 import utils.RepositoryManager;
 
 import java.util.List;
@@ -47,11 +49,10 @@ public class UserService {
     }
 
     public Optional<String> checkLogin(String email, String password) {
-        UserModel model = userRepository.getByEmailAndPassword(email, password)
-                .map(userMapper::map)
+        User user = userRepository.getByEmail(email)
                 .orElse(null);
 
-        if (model == null) {
+        if (user == null || !PasswordHash.checkPassword(password, user.getPassword())) {
             return Optional.of("Incorrect email or password");
         }
 
@@ -59,6 +60,8 @@ public class UserService {
     }
 
     public UserModel create(CreateUserModel createModel) throws IllegalArgumentException {
+        String hashedPassword = PasswordHash.hashPassword(createModel.getPassword());
+        createModel.setPassword(hashedPassword);
         return userMapper.map(userRepository.create(createUserMapper.map(createModel)));
     }
 

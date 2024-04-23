@@ -20,8 +20,8 @@ public class CommentLikeService {
                 .build());
     }
 
-    public boolean removeLike(Long userId, Long commentId) {
-        return commentLikeRepository.delete(CommentLike.builder()
+    public void removeLike(Long userId, Long commentId) {
+        commentLikeRepository.delete(CommentLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
                 .comment(commentRepository.getById(commentId)

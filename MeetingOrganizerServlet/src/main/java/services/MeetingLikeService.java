@@ -20,8 +20,8 @@ public class MeetingLikeService {
                 .build());
     }
 
-    public boolean removeLike(Long userId, Long meetingId) {
-        return meetingLikeRepository.delete(MeetingLike.builder()
+    public void removeLike(Long userId, Long meetingId) {
+        meetingLikeRepository.delete(MeetingLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
                 .meeting(meetingRepository.getById(meetingId)
