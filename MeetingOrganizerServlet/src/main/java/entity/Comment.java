@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Builder
 public class Comment {
-    private Long commentId;
+    private long commentId;
     private String text;
     private LocalDateTime dateTime;
     private User user;

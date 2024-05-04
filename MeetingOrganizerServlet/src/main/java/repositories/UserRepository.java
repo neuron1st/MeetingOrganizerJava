@@ -15,10 +15,13 @@ import java.util.Optional;
 public class UserRepository implements Repository<Long, User> {
     private static final String CREATE_USER = "INSERT INTO users (name, email, password) " +
             "VALUES (?, ?, ?)";
-    private static final String GET_ALL_USERS = "SELECT * FROM users";
-    private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
-    private static final String GET_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
-    private static final String GET_USER_BY_EMAIL_PASSWORD = "SELECT * FROM users WHERE email = ? AND password = ? ";
+    private static final String GET_ALL_USERS = "SELECT user_id, name, email, password FROM users";
+    private static final String GET_USER_BY_ID = "SELECT user_id, name, email, password " +
+            "FROM users WHERE user_id = ?";
+    private static final String GET_USER_BY_EMAIL = "SELECT user_id, name, email, password " +
+            "FROM users WHERE email = ?";
+    private static final String GET_USER_BY_EMAIL_PASSWORD = "SELECT user_id, name, email, password " +
+            "FROM users WHERE email = ? AND password = ?";
     private static final String UPDATE_USER = "UPDATE users " +
             "SET name = ?, email = ?, password = ? " +
             "WHERE user_id = ?";

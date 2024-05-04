@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class CreateParticipantModel {
-    private Long userId;
-    private Long meetingId;
+    private long userId;
+    private long meetingId;
     private Role role;
 }

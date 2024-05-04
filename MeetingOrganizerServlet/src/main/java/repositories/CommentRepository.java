@@ -18,19 +18,23 @@ import java.util.Optional;
 public class CommentRepository implements Repository<Long, Comment> {
     private static final String CREATE_COMMENT = "INSERT INTO comments (text, creation_date, user_id, meeting_id) " +
             "VALUES (?, ?, ?, ?)";
-    private static final String GET_ALL_COMMENTS = "SELECT * FROM comments";
-    private static final String GET_ALL_BY_MEETING_ID = "SELECT * FROM comments WHERE meeting_id = ?";
-    private static final String GET_COMMENT_BY_ID = "SELECT * FROM comments WHERE comment_id = ?";
+    private static final String GET_ALL_COMMENTS = "SELECT comment_id, text, creation_date, user_id, meeting_id " +
+            "FROM comments";
+    private static final String GET_ALL_BY_MEETING_ID = "SELECT comment_id, text, creation_date, user_id, meeting_id " +
+            "FROM comments WHERE meeting_id = ?";
+    private static final String GET_COMMENT_BY_ID = "SELECT comment_id, text, creation_date, user_id, meeting_id " +
+            "FROM comments WHERE comment_id = ?";
     private static final String UPDATE_COMMENT = "UPDATE comments " +
             "SET text = ?, creation_date = ?, user_id = ?, meeting_id = ? " +
             "WHERE comment_id = ?";
     private static final String DELETE_COMMENT = "DELETE FROM comments WHERE comment_id = ?";
-    private final UserRepository userDao;
-    private final MeetingRepository meetingDao;
 
-    public CommentRepository(UserRepository userDao, MeetingRepository meetingDao) {
-        this.userDao = userDao;
-        this.meetingDao = meetingDao;
+    private final UserRepository userRepository;
+    private final MeetingRepository meetingRepository;
+
+    public CommentRepository(UserRepository userRepository, MeetingRepository meetingRepository) {
+        this.userRepository = userRepository;
+        this.meetingRepository = meetingRepository;
     }
 
     @Override
@@ -139,8 +143,8 @@ public class CommentRepository implements Repository<Long, Comment> {
     }
 
     private Comment mapResultSetToComment(ResultSet resultSet) throws SQLException {
-        User user = userDao.getById(resultSet.getLong("user_id")).orElseThrow();
-        Meeting meeting = meetingDao.getById(resultSet.getLong("meeting_id")).orElseThrow();
+        User user = userRepository.getById(resultSet.getLong("user_id")).orElseThrow();
+        Meeting meeting = meetingRepository.getById(resultSet.getLong("meeting_id")).orElseThrow();
 
         return Comment.builder()
                 .commentId(resultSet.getLong("comment_id"))

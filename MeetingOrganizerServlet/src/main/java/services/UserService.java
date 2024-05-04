@@ -1,19 +1,18 @@
 package services;
 
-import entity.User;
-import repositories.UserRepository;
 import dto.user.CreateUserModel;
 import dto.user.UserModel;
+import entity.User;
 import mappers.user.CreateUserMapper;
 import mappers.user.UserMapper;
+import repositories.UserRepository;
 import utils.PasswordHash;
-import utils.RepositoryManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserService {
-    private final UserRepository userRepository = RepositoryManager.getUserRepository();
+    private final UserRepository userRepository = new UserRepository();
     private final UserMapper userMapper = new UserMapper();
     private final CreateUserMapper createUserMapper = new CreateUserMapper();
 

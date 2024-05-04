@@ -1,4 +1,4 @@
-package servlets;
+package servlets.meeting;
 
 import dto.comment.CommentModel;
 import dto.meeting.MeetingModel;

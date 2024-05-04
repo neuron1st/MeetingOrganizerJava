@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CommentModel {
-    private Long commentId;
+    private long commentId;
     private String text;
     private LocalDateTime dateTime;
     private String userName;
     private String meetingName;
-    private Integer likeCount;
+    private int likeCount;
 }

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class CommentLikeRepository {
     private static final String ADD_LIKE = "INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE = "DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?";
-    private static final String GET_LIKES_COUNT = "SELECT COUNT(*) FROM comment_likes WHERE comment_id = ?";
+    private static final String GET_LIKES_COUNT = "SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?";
 
     public CommentLike create(CommentLike like) {
         try (Connection connection = ConnectionManager.getConnection();

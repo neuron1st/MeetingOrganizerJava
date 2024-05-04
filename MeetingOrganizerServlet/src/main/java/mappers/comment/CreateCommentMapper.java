@@ -1,17 +1,16 @@
 package mappers.comment;
 
-import repositories.MeetingRepository;
-import repositories.UserRepository;
 import dto.comment.CreateCommentModel;
 import entity.Comment;
 import entity.Meeting;
 import entity.User;
 import mappers.BaseMapper;
-import utils.RepositoryManager;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 
 public class CreateCommentMapper implements BaseMapper<CreateCommentModel, Comment> {
-    private final UserRepository userRepository = RepositoryManager.getUserRepository();
-    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
+    private final UserRepository userRepository = new UserRepository();
+    private final MeetingRepository meetingRepository = new MeetingRepository();
 
     @Override
     public Comment map(CreateCommentModel source) {

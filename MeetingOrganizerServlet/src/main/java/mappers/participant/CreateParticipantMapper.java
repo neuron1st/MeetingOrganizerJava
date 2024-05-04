@@ -1,17 +1,16 @@
 package mappers.participant;
 
-import repositories.MeetingRepository;
-import repositories.UserRepository;
 import dto.participant.CreateParticipantModel;
 import entity.Meeting;
 import entity.Participant;
 import entity.User;
 import mappers.BaseMapper;
-import utils.RepositoryManager;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 
 public class CreateParticipantMapper implements BaseMapper<CreateParticipantModel, Participant> {
-    private final UserRepository userRepository = RepositoryManager.getUserRepository();
-    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
+    private final UserRepository userRepository = new UserRepository();
+    private final MeetingRepository meetingRepository = new MeetingRepository();
 
     @Override
     public Participant map(CreateParticipantModel source) {

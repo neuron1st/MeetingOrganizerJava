@@ -17,20 +17,24 @@ import java.util.Optional;
 public class ParticipantRepository implements Repository<Long, Participant> {
     private static final String ADD_PARTICIPANT = "INSERT INTO participants (meeting_id, user_id, role) " +
             "VALUES (?, ?, ?)";
-    private static final String GET_ALL_PARTICIPANTS = "SELECT * FROM participants";
-    private static final String GET_ALL_BY_MEETING_ID = "SELECT * FROM participants WHERE meeting_id = ?";
-    private static final String GET_ALL_BY_USER_ID = "SELECT * FROM participants WHERE user_id = ?";
-    private static final String GET_PARTICIPANT_BY_ID = "SELECT * FROM participants WHERE meeting_id = ? AND user_id = ?";
+    private static final String GET_ALL_PARTICIPANTS = "SELECT meeting_id, user_id, role " +
+            "FROM participants";
+    private static final String GET_ALL_BY_MEETING_ID = "SELECT meeting_id, user_id, role " +
+            "FROM participants WHERE meeting_id = ?";
+    private static final String GET_ALL_BY_USER_ID = "SELECT meeting_id, user_id, role " +
+            "FROM participants WHERE user_id = ?";
+    private static final String GET_PARTICIPANT_BY_ID = "SELECT meeting_id, user_id, role " +
+            "FROM participants WHERE meeting_id = ? AND user_id = ?";
     private static final String UPDATE_PARTICIPANT = "UPDATE participants " +
             "SET role = ? " +
             "WHERE meeting_id = ? AND user_id = ?";
     private static final String DELETE_PARTICIPANT = "DELETE FROM participants WHERE meeting_id = ? AND user_id = ?";
-    private final UserRepository userDao;
-    private final MeetingRepository meetingDao;
+    private final UserRepository userRepository;
+    private final MeetingRepository meetingRepository;
 
-    public ParticipantRepository(UserRepository userDao, MeetingRepository meetingDao) {
-        this.userDao = userDao;
-        this.meetingDao = meetingDao;
+    public ParticipantRepository(UserRepository userRepository, MeetingRepository meetingRepository) {
+        this.userRepository = userRepository;
+        this.meetingRepository = meetingRepository;
     }
 
     @Override
@@ -166,8 +170,8 @@ public class ParticipantRepository implements Repository<Long, Participant> {
     }
 
     private Participant mapResultSetToParticipant(ResultSet resultSet) throws SQLException {
-        User user = userDao.getById(resultSet.getLong("user_id")).orElseThrow();
-        Meeting meeting = meetingDao.getById(resultSet.getLong("meeting_id")).orElseThrow();
+        User user = userRepository.getById(resultSet.getLong("user_id")).orElseThrow();
+        Meeting meeting = meetingRepository.getById(resultSet.getLong("meeting_id")).orElseThrow();
         Role role = Role.valueOf(resultSet.getString("role"));
 
         return Participant.builder()

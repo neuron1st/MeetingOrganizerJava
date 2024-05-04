@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Create Meeting</h1>
-    <form action="${pageContext.request.contextPath}/createMeeting" method="post">
+    <form action="${pageContext.request.contextPath}/meetings/create" method="post">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required><br>
         <label for="description">Description:</label>

@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MeetingModel {
-    private Long meetingId;
+    private long meetingId;
     private String title;
     private String description;
     private LocalDateTime date;
-    private Integer likeCount;
-    private Integer participantCount;
-    private Integer commentCount;
+    private int likeCount;
+    private int participantCount;
+    private int commentCount;
 }

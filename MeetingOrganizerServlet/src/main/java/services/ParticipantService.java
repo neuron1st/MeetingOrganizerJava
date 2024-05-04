@@ -1,16 +1,17 @@
 package services;
 
-import repositories.ParticipantRepository;
 import dto.participant.CreateParticipantModel;
 import dto.participant.ParticipantModel;
 import mappers.participant.CreateParticipantMapper;
 import mappers.participant.ParticipantMapper;
-import utils.RepositoryManager;
+import repositories.MeetingRepository;
+import repositories.ParticipantRepository;
+import repositories.UserRepository;
 
 import java.util.List;
 
 public class ParticipantService {
-    private final ParticipantRepository participantRepository = RepositoryManager.getParticipantRepository();
+    private final ParticipantRepository participantRepository = new ParticipantRepository(new UserRepository(), new MeetingRepository());
 
     private final ParticipantMapper participantMapper = new ParticipantMapper();
     private final CreateParticipantMapper createParticipantMapper = new CreateParticipantMapper();

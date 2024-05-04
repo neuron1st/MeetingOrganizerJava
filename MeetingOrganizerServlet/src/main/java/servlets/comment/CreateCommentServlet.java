@@ -1,6 +1,5 @@
-package servlets;
+package servlets.comment;
 
-import dto.comment.CommentModel;
 import dto.comment.CreateCommentModel;
 import dto.user.UserModel;
 import jakarta.servlet.ServletException;
@@ -22,13 +21,13 @@ public class CreateCommentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(JspPathCreator.getPath("createComment")).forward(request, response);
+        request.getRequestDispatcher(JspPathCreator.getPath("comments-create")).forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
         String text = request.getParameter("text");
-        Long meetingId = Long.parseLong(request.getParameter("meetingId"));
+        long meetingId = Long.parseLong(request.getParameter("meetingId"));
 
         CreateCommentModel createModel = CreateCommentModel.builder()
                 .text(text)

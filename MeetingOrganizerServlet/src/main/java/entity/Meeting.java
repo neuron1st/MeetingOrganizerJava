@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Builder
 public class Meeting {
-    private Long meetingId;
+    private long meetingId;
     private String title;
     private String description;
     private LocalDateTime date;

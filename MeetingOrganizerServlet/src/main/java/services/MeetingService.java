@@ -1,23 +1,23 @@
 package services;
 
-import repositories.CommentRepository;
-import repositories.MeetingRepository;
-import repositories.MeetingLikeRepository;
-import repositories.ParticipantRepository;
 import dto.meeting.CreateMeetingModel;
 import dto.meeting.MeetingModel;
 import mappers.meeting.CreateMeetingMapper;
 import mappers.meeting.MeetingMapper;
-import utils.RepositoryManager;
+import repositories.CommentRepository;
+import repositories.MeetingLikeRepository;
+import repositories.MeetingRepository;
+import repositories.ParticipantRepository;
+import repositories.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class MeetingService {
-    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
-    private final CommentRepository commentRepository = RepositoryManager.getCommentRepository();
-    private final ParticipantRepository participantRepository = RepositoryManager.getParticipantRepository();
-    private final MeetingLikeRepository meetingLikeRepository = RepositoryManager.getMeetingLikeRepository();
+    private final MeetingRepository meetingRepository = new MeetingRepository();
+    private final CommentRepository commentRepository = new CommentRepository(new UserRepository(), new MeetingRepository());
+    private final ParticipantRepository participantRepository = new ParticipantRepository(new UserRepository(), meetingRepository);
+    private final MeetingLikeRepository meetingLikeRepository = new MeetingLikeRepository();
 
     private final MeetingMapper meetingMapper = new MeetingMapper();
     private final CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();

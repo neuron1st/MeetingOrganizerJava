@@ -33,7 +33,7 @@
     <p>Comment Count: ${meeting.commentCount}</p>
     <a href="<%= request.getContextPath() + "/meetings" %>">Back to Meetings</a>
     <br/>
-    <a href="<c:url value='meetings/createComment?id=${meeting.meetingId}'/>">Add Comment</a>
+    <a href="<c:url value='/meetings/createComment'/>?id=${meeting.meetingId}">Add Comment</a>
 
     <h2>Comments:</h2>
     <ul>

@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Meetings</h1>
-    <a href="<c:url value='/createMeeting'/>">Create Meeting</a>
+    <a href="<c:url value='meetings/create'/>">Create Meeting</a>
     <form action="<c:url value='/meetings'/>" method="get">
         <label for="searchTitle">Search by Title:</label>
         <input type="text" id="searchTitle" name="searchTitle" value="${param.searchTitle}">

@@ -16,13 +16,16 @@ import java.util.Optional;
 public class MeetingRepository implements Repository<Long, Meeting> {
     private static final String CREATE_MEETING = "INSERT INTO meetings (title, description, event_date) " +
             "VALUES (?, ?, ?)";
-    private static final String GET_ALL_MEETINGS = "SELECT * FROM meetings";
-    private static final String GET_MEETING_BY_ID = "SELECT * FROM meetings WHERE meeting_id = ?";
+    private static final String GET_ALL_MEETINGS = "SELECT meeting_id, title, description, event_date " +
+            "FROM meetings";
+    private static final String GET_MEETING_BY_ID = "SELECT meeting_id, title, description, event_date " +
+            "FROM meetings WHERE meeting_id = ?";
     private static final String UPDATE_MEETING = "UPDATE meetings " +
             "SET title = ?, description = ?, event_date = ? " +
             "WHERE meeting_id = ?";
     private static final String DELETE_MEETING = "DELETE FROM meetings WHERE meeting_id = ?";
-    private static final String GET_BY_TITLE = "SELECT * FROM meetings WHERE title LIKE ?";
+    private static final String GET_BY_TITLE = "SELECT meeting_id, title, description, event_date " +
+            "FROM meetings WHERE title LIKE ?";
 
     @Override
     public Meeting create(Meeting meeting) {

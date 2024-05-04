@@ -1,4 +1,4 @@
-package servlets;
+package servlets.meeting;
 
 import dto.meeting.MeetingModel;
 import jakarta.servlet.ServletException;

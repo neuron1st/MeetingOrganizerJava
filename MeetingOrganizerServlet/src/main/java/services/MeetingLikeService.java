@@ -1,15 +1,14 @@
 package services;
 
-import repositories.MeetingRepository;
-import repositories.MeetingLikeRepository;
-import repositories.UserRepository;
 import entity.MeetingLike;
-import utils.RepositoryManager;
+import repositories.MeetingLikeRepository;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 
 public class MeetingLikeService {
-    private final MeetingLikeRepository meetingLikeRepository = RepositoryManager.getMeetingLikeRepository();
-    private final UserRepository userRepository = RepositoryManager.getUserRepository();
-    private final MeetingRepository meetingRepository = RepositoryManager.getMeetingRepository();
+    private final MeetingLikeRepository meetingLikeRepository = new MeetingLikeRepository();
+    private final UserRepository userRepository = new UserRepository();
+    private final MeetingRepository meetingRepository = new MeetingRepository();
 
     public void addLike(Long userId, Long meetingId) {
         meetingLikeRepository.create(MeetingLike.builder()

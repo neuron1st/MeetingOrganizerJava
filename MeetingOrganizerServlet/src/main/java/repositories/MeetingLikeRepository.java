@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class MeetingLikeRepository {
     private static final String ADD_LIKE = "INSERT INTO meeting_likes (meeting_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE = "DELETE FROM meeting_likes WHERE meeting_id = ? AND user_id = ?";
-    private static final String GET_LIKES_COUNT = "SELECT COUNT(*) FROM meeting_likes WHERE meeting_id = ?";
+    private static final String GET_LIKES_COUNT = "SELECT COUNT(1) FROM meeting_likes WHERE meeting_id = ?";
 
     public MeetingLike create(MeetingLike like) {
         try (Connection connection = ConnectionManager.getConnection();

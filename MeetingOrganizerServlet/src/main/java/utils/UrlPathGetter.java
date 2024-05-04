@@ -10,7 +10,7 @@ public class UrlPathGetter {
     public static final String MEETINGS = "/meetings";
     public static final String DETAILS = "/details";
     public static final String PARTICIPANTS = "/participants";
-    public static final String CREATE_MEETING = "/createMeeting";
+    public static final String CREATE_MEETING = "/create";
     public static final String CREATE_COMMENT = "/createComment";
     public static final String CREATE_MEETING_LIKE = "/createMeetingLike";
     public static final String CREATE_COMMENT_LIKE = "/createCommentLike";

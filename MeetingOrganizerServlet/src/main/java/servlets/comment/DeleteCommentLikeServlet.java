@@ -1,25 +1,25 @@
-package servlets;
+package servlets.comment;
 
 import dto.user.UserModel;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import services.MeetingLikeService;
+import services.CommentLikeService;
 
 import java.io.IOException;
 
 import static utils.UrlPathGetter.*;
 
-@WebServlet(MEETINGS + DELETE_MEETING_LIKE)
-public class DeleteMeetingLikeServlet extends HttpServlet {
-    private final MeetingLikeService meetingLikeService = new MeetingLikeService();
+@WebServlet(MEETINGS + DELETE_COMMENT_LIKE)
+public class DeleteCommentLikeServlet extends HttpServlet {
+    private final CommentLikeService commentLikeService = new CommentLikeService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
         Long userId = currentUser.getUserId();
-        Long meetingId = Long.valueOf(request.getParameter("meetingId"));
-        meetingLikeService.removeLike(userId, meetingId);
-        response.sendRedirect(request.getContextPath() + "/meetings/details?id=" + meetingId);
+        Long commentId = Long.parseLong(request.getParameter("commentId"));
+        commentLikeService.removeLike(userId, commentId);
+        response.sendRedirect(request.getContextPath() + "/meetings/details?id=" + request.getParameter("meetingId"));
     }
 }

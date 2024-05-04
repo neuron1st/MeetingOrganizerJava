@@ -13,7 +13,7 @@ public class CommentMapper implements BaseMapper<Comment, CommentModel> {
                 .dateTime(source.getDateTime())
                 .userName(source.getUser().getFullName())
                 .meetingName(source.getMeeting().getTitle())
-                .likeCount(null)
+                .likeCount(0)
                 .build();
     }
 }

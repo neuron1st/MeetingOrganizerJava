@@ -1,7 +1,6 @@
-package servlets;
+package servlets.auth;
 
 import dto.user.CreateUserModel;
-import dto.user.UserModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,7 +30,7 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            UserModel model = userService.create(CreateUserModel.builder()
+            userService.create(CreateUserModel.builder()
                     .fullName(fullName)
                     .email(email)
                     .password(password)

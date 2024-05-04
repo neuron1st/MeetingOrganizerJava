@@ -1,4 +1,4 @@
-package servlets;
+package servlets.meeting;
 
 import dto.meeting.CreateMeetingModel;
 import dto.meeting.MeetingModel;
@@ -28,7 +28,7 @@ public class CreateMeetingServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(JspPathCreator.getPath("createMeeting")).forward(request, response);
+        request.getRequestDispatcher(JspPathCreator.getPath("meetings-create")).forward(request, response);
     }
 
     @Override

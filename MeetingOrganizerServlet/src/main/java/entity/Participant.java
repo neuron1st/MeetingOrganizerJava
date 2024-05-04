@@ -12,7 +12,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Builder
 public class Participant {
-    private Long participantId;
+    private long participantId;
     private User user;
     private Meeting meeting;
     private Role role;

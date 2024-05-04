@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class CreateCommentModel {
     private String text;
     private LocalDateTime dateTime;
-    private Long userId;
-    private Long meetingId;
+    private long userId;
+    private long meetingId;
 }

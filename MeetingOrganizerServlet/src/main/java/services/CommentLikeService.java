@@ -1,15 +1,15 @@
 package services;
 
-import repositories.CommentRepository;
-import repositories.CommentLikeRepository;
-import repositories.UserRepository;
 import entity.CommentLike;
-import utils.RepositoryManager;
+import repositories.CommentLikeRepository;
+import repositories.CommentRepository;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 
 public class CommentLikeService {
-    private final CommentLikeRepository commentLikeRepository = RepositoryManager.getCommentLikeRepository();
-    private final UserRepository userRepository = RepositoryManager.getUserRepository();
-    private final CommentRepository commentRepository = RepositoryManager.getCommentRepository();
+    private final CommentLikeRepository commentLikeRepository = new CommentLikeRepository();
+    private final UserRepository userRepository = new UserRepository();
+    private final CommentRepository commentRepository = new CommentRepository(userRepository, new MeetingRepository());
 
     public void addLike(Long userId, Long commentId) {
         commentLikeRepository.create(CommentLike.builder()

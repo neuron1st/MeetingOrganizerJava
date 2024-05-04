@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class UserModel {
-    private Long userId;
+    private long userId;
     private String fullName;
     private String email;
 }

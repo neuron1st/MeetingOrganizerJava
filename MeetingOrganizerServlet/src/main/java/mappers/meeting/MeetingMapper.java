@@ -12,9 +12,9 @@ public class MeetingMapper implements BaseMapper<Meeting, MeetingModel> {
                 .title(source.getTitle())
                 .description(source.getDescription())
                 .date(source.getDate())
-                .likeCount(null)
-                .participantCount(null)
-                .commentCount(null)
+                .likeCount(0)
+                .participantCount(0)
+                .commentCount(0)
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package servlets;
+package servlets.participant;
 
 import dto.user.UserModel;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,8 +19,8 @@ public class DeleteParticipantServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
-        Long userId = currentUser.getUserId();
-        Long meetingId = Long.valueOf(request.getParameter("meetingId"));
+        long userId = currentUser.getUserId();
+        long meetingId = Long.parseLong(request.getParameter("meetingId"));
 
         participantService.delete(meetingId, userId);
 

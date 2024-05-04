@@ -1,4 +1,4 @@
-package servlets;
+package servlets.participant;
 
 import dto.participant.CreateParticipantModel;
 import dto.user.UserModel;
@@ -22,8 +22,8 @@ public class CreateParticipantServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         UserModel currentUser = (UserModel)request.getSession().getAttribute("user");
-        Long userId = currentUser.getUserId();
-        Long meetingId = Long.valueOf(request.getParameter("meetingId"));
+        long userId = currentUser.getUserId();
+        long meetingId = Long.parseLong(request.getParameter("meetingId"));
 
         CreateParticipantModel createParticipantModel = CreateParticipantModel.builder()
                 .meetingId(meetingId)

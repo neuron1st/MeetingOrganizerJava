@@ -3,12 +3,15 @@ package entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @Builder
 public class User {
-    private Long userId;
+    private long userId;
     private String fullName;
     private String email;
     private String password;

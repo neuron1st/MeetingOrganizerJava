@@ -1,4 +1,4 @@
-package servlets;
+package servlets.participant;
 
 import dto.participant.ParticipantModel;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ public class ParticipantByMeetingIdServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long meetingId = Long.valueOf(request.getParameter("meetingId"));
+        long meetingId = Long.parseLong(request.getParameter("meetingId"));
         List<ParticipantModel> models = participantService.getAllByMeetingId(meetingId);
         request.setAttribute("participants", models);
         request.setAttribute("meetingId", meetingId);
