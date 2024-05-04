@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import services.MeetingService;
 import services.ParticipantService;
 import utils.JspPathCreator;
+import validators.MeetingValidator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,13 +27,15 @@ public class CreateMeetingServlet extends HttpServlet {
     private final MeetingService meetingService = new MeetingService();
     private final ParticipantService participantService = new ParticipantService();
 
+    private final MeetingValidator meetingValidator = new MeetingValidator();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher(JspPathCreator.getPath("meetings-create")).forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         LocalDateTime date = LocalDateTime.parse(request.getParameter("date"));
@@ -42,6 +45,17 @@ public class CreateMeetingServlet extends HttpServlet {
                 .description(description)
                 .date(date)
                 .build();
+
+        try {
+            meetingValidator.validate(createModel);
+        } catch (IllegalArgumentException ex) {
+            request.setAttribute("title", title);
+            request.setAttribute("description", description);
+            request.setAttribute("date", request.getParameter("date"));
+            request.setAttribute("error", ex.getMessage());
+            request.getRequestDispatcher(JspPathCreator.getPath("meetings-create")).forward(request, response);
+            return;
+        }
 
         MeetingModel meetingModel = meetingService.create(createModel);
 

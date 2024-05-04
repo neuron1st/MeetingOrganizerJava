@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import services.UserService;
 import utils.JspPathCreator;
+import validators.UserValidator;
 
 import java.io.IOException;
 
@@ -16,7 +17,8 @@ import static utils.UrlPathGetter.REGISTRATION;
 
 @WebServlet(REGISTRATION)
 public class RegisterServlet extends HttpServlet {
-    private static final UserService userService = new UserService();
+    private final UserService userService = new UserService();
+    private final UserValidator userValidator = new UserValidator();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,15 +32,22 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            userService.create(CreateUserModel.builder()
+            CreateUserModel model = CreateUserModel.builder()
                     .fullName(fullName)
                     .email(email)
                     .password(password)
-                    .build());
+                    .build();
+
+            userValidator.validate(model);
+
+            userService.create(model);
+
             response.sendRedirect(request.getContextPath() + LOGIN);
         } catch (IllegalArgumentException e) {
-            String message = e.getMessage();
-            request.setAttribute("message", message);
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("email", email);
+            request.setAttribute("password", password);
+            request.setAttribute("message", e.getMessage());
             request.getRequestDispatcher(JspPathCreator.getPath("registration")).forward(request, response);
         }
     }

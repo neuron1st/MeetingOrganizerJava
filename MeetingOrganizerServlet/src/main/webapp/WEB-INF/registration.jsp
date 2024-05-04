@@ -10,13 +10,13 @@
 <% } %>
 <form method="post" action="<%= request.getContextPath() + "/registration" %>">
     <label for="fullName">Full Name:</label><br>
-    <input type="text" id="fullName" name="fullName" required><br><br>
+    <input type="text" id="fullName" name="fullName" value="${not empty fullName ? fullName : ''}" required><br><br>
 
     <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
+    <input type="email" id="email" name="email" value="${not empty email ? email : ''}" required><br><br>
 
     <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
+    <input type="password" id="password" name="password" value="${not empty password ? password : ''}" required><br><br>
 
     <input type="submit" value="Register">
 </form>

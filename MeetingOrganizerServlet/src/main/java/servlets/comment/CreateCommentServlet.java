@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import services.CommentService;
 import utils.JspPathCreator;
+import validators.CommentValidator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import static utils.UrlPathGetter.*;
 @WebServlet(MEETINGS + CREATE_COMMENT)
 public class CreateCommentServlet extends HttpServlet {
     private final CommentService commentService = new CommentService();
+    private final CommentValidator commentValidator = new CommentValidator();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,6 +37,15 @@ public class CreateCommentServlet extends HttpServlet {
                 .userId(currentUser.getUserId())
                 .meetingId(meetingId)
                 .build();
+
+        try {
+            commentValidator.validate(createModel);
+        } catch (IllegalArgumentException ex) {
+            request.setAttribute("text", text);
+            request.setAttribute("error", ex.getMessage());
+            request.getRequestDispatcher(JspPathCreator.getPath("comments-create")).forward(request, response);
+            return;
+        }
 
         commentService.create(createModel);
         response.sendRedirect(request.getContextPath() + MEETINGS + DETAILS + "?id=" + meetingId);
