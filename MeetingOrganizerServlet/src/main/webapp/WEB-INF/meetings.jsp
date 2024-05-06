@@ -7,6 +7,9 @@
     <title>Meetings</title>
 </head>
 <body>
+    <form action="<c:url value='/logout' />" method="get">
+        <input type="submit" value="Logout">
+    </form>
     <h1>Meetings</h1>
     <a href="<c:url value='meetings/create'/>">Create Meeting</a>
     <form action="<c:url value='/meetings'/>" method="get">

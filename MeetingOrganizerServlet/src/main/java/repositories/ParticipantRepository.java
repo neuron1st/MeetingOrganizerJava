@@ -5,7 +5,6 @@ import entity.Participant;
 import entity.Role;
 import entity.User;
 import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -126,8 +125,6 @@ public class ParticipantRepository {
             throw new RuntimeException("Failed to get participant by id", e);
         }
     }
-
-
 
     public boolean update(Participant participant) {
         try (Connection connection = connectionManager.getConnection();

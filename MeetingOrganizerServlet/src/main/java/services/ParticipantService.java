@@ -4,13 +4,10 @@ import dto.participant.CreateParticipantModel;
 import dto.participant.ParticipantModel;
 import mappers.participant.CreateParticipantMapper;
 import mappers.participant.ParticipantMapper;
-import repositories.MeetingRepository;
 import repositories.ParticipantRepository;
-import repositories.UserRepository;
-import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ParticipantService {
     private final ParticipantRepository participantRepository;
@@ -34,25 +31,36 @@ public class ParticipantService {
                 .toList();
     }
 
-    public List<ParticipantModel> getAllByMeetingId(Long meetingId) {
+    public List<ParticipantModel> getAllByMeetingId(long meetingId) {
         return participantRepository.getAllByMeetingId(meetingId)
                 .stream()
                 .map(participantMapper::map)
                 .toList();
     }
 
-    public List<ParticipantModel> getAllByUserId(Long userId) {
+    public List<ParticipantModel> getAllByUserId(long userId) {
         return participantRepository.getAllByMeetingId(userId)
                 .stream()
                 .map(participantMapper::map)
                 .toList();
     }
 
+    public Optional<ParticipantModel> getById(long meetingId, long userId) {
+        ParticipantModel participantModel =  participantRepository.getById(meetingId, userId)
+                .map(participantMapper::map)
+                .orElse(null);
+        if (participantModel == null) {
+            return Optional.empty();
+        }
+        return Optional.of(participantModel);
+    }
+
+
     public ParticipantModel create(CreateParticipantModel createModel) {
         return participantMapper.map(participantRepository.create(createParticipantMapper.map(createModel)));
     }
 
-    public boolean delete(Long meetingId, Long userId) {
+    public boolean delete(long meetingId, long userId) {
         return participantRepository.delete(meetingId, userId);
     }
 }

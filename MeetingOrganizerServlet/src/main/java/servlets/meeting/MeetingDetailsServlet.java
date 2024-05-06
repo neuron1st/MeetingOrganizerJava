@@ -1,8 +1,9 @@
 package servlets.meeting;
 
 import dto.comment.CommentModel;
-import dto.comment.CreateCommentModel;
 import dto.meeting.MeetingModel;
+import dto.participant.ParticipantModel;
+import dto.user.UserModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,13 +32,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static utils.UrlPathGetter.MEETINGS;
 import static utils.UrlPathGetter.DETAILS;
+import static utils.UrlPathGetter.MEETINGS;
 
 @WebServlet(MEETINGS+DETAILS)
 public class MeetingDetailsServlet extends HttpServlet {
     private MeetingService meetingService;
     private CommentService commentService;
+    private  ParticipantService participantService;
     @Override
     public void init() {
         BaseConnectionManager connectionManager = new ConnectionManager();
@@ -51,10 +53,14 @@ public class MeetingDetailsServlet extends HttpServlet {
         CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();
         CommentMapper commentMapper = new CommentMapper();
         CreateCommentMapper createCommentMapper = new CreateCommentMapper();
+        ParticipantMapper participantMapper = new ParticipantMapper();
+        CreateParticipantMapper createParticipantMapper = new CreateParticipantMapper();
 
         commentService = new CommentService(commentRepository, commentLikeRepository, commentMapper, createCommentMapper);
 
         meetingService = new MeetingService(meetingRepository, commentRepository, participantRepository, meetingLikeRepository, meetingMapper, createMeetingMapper);
+
+        participantService = new ParticipantService(participantRepository, participantMapper, createParticipantMapper);
     }
 
     @Override
@@ -73,6 +79,13 @@ public class MeetingDetailsServlet extends HttpServlet {
 
             List<CommentModel> comments = commentService.getByMeetingId(meetingId);
             request.setAttribute("comments", comments);
+
+            UserModel user = (UserModel) request.getSession().getAttribute("user");
+
+            if (user != null) {
+                Optional<ParticipantModel> participant = participantService.getById(meetingId, user.getUserId());
+                participant.ifPresent(participantModel -> request.setAttribute("userRole", participantModel.getRole().toString()));
+            }
 
             request.getRequestDispatcher(JspPathCreator.getPath("meetings-details")).forward(request, response);
         } else {
