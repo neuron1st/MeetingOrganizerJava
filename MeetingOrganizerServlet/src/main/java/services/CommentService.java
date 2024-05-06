@@ -8,16 +8,30 @@ import repositories.CommentLikeRepository;
 import repositories.CommentRepository;
 import repositories.MeetingRepository;
 import repositories.UserRepository;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CommentService {
-    private final CommentRepository commentRepository = new CommentRepository(new UserRepository(), new MeetingRepository());
-    private final CommentLikeRepository commentLikeRepository = new CommentLikeRepository();
+    private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final CommentMapper commentMapper;
+    private final CreateCommentMapper createCommentMapper;
 
-    private final CommentMapper commentMapper = new CommentMapper();
-    private final CreateCommentMapper createCommentMapper = new CreateCommentMapper();
+    public CommentService(
+            CommentRepository commentRepository,
+            CommentLikeRepository commentLikeRepository,
+            CommentMapper commentMapper,
+            CreateCommentMapper createCommentMapper
+    ) {
+        this.commentRepository = commentRepository;
+        this.commentLikeRepository = commentLikeRepository;
+        this.commentMapper = commentMapper;
+        this.createCommentMapper = createCommentMapper;
+    }
+
 
     public List<CommentModel> getAll() {
         List<CommentModel> models = commentRepository.getAll()

@@ -4,11 +4,24 @@ import entity.MeetingLike;
 import repositories.MeetingLikeRepository;
 import repositories.MeetingRepository;
 import repositories.UserRepository;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 
 public class MeetingLikeService {
-    private final MeetingLikeRepository meetingLikeRepository = new MeetingLikeRepository();
-    private final UserRepository userRepository = new UserRepository();
-    private final MeetingRepository meetingRepository = new MeetingRepository();
+    private final MeetingLikeRepository meetingLikeRepository;
+    private final UserRepository userRepository;
+    private final MeetingRepository meetingRepository;
+
+    public MeetingLikeService(
+            MeetingLikeRepository meetingLikeRepository,
+            UserRepository userRepository,
+            MeetingRepository meetingRepository
+    ) {
+        this.meetingLikeRepository = meetingLikeRepository;
+        this.userRepository = userRepository;
+        this.meetingRepository = meetingRepository;
+    }
+
 
     public void addLike(Long userId, Long meetingId) {
         meetingLikeRepository.create(MeetingLike.builder()

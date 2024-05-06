@@ -1,4 +1,6 @@
-package utils;
+package repository;
+
+import utils.BaseConnectionManager;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -6,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionManager implements BaseConnectionManager {
+public class TestConnectionManager implements BaseConnectionManager {
     private static final String URL_KEY = "db.url";
     private static final String USERNAME_KEY = "db.username";
     private static final String PASSWORD_KEY = "db.password";
@@ -15,7 +17,7 @@ public class ConnectionManager implements BaseConnectionManager {
         Properties properties = new Properties();
         try {
             properties.load(Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("application.properties"));
+                    .getResourceAsStream("test.properties"));
             Class.forName("org.postgresql.Driver");
             String url = properties.getProperty(URL_KEY);
             String username = properties.getProperty(USERNAME_KEY);
@@ -26,3 +28,4 @@ public class ConnectionManager implements BaseConnectionManager {
         }
     }
 }
+

@@ -9,18 +9,36 @@ import repositories.MeetingLikeRepository;
 import repositories.MeetingRepository;
 import repositories.ParticipantRepository;
 import repositories.UserRepository;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class MeetingService {
-    private final MeetingRepository meetingRepository = new MeetingRepository();
-    private final CommentRepository commentRepository = new CommentRepository(new UserRepository(), new MeetingRepository());
-    private final ParticipantRepository participantRepository = new ParticipantRepository(new UserRepository(), meetingRepository);
-    private final MeetingLikeRepository meetingLikeRepository = new MeetingLikeRepository();
+    private final MeetingRepository meetingRepository;
+    private final CommentRepository commentRepository;
+    private final ParticipantRepository participantRepository;
+    private final MeetingLikeRepository meetingLikeRepository;
 
-    private final MeetingMapper meetingMapper = new MeetingMapper();
-    private final CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();
+    private final MeetingMapper meetingMapper;
+    private final CreateMeetingMapper createMeetingMapper;
+
+    public MeetingService(
+            MeetingRepository meetingRepository,
+            CommentRepository commentRepository,
+            ParticipantRepository participantRepository,
+            MeetingLikeRepository meetingLikeRepository,
+            MeetingMapper meetingMapper,
+            CreateMeetingMapper createMeetingMapper
+    ) {
+        this.meetingRepository = meetingRepository;
+        this.commentRepository = commentRepository;
+        this.participantRepository = participantRepository;
+        this.meetingLikeRepository = meetingLikeRepository;
+        this.meetingMapper = meetingMapper;
+        this.createMeetingMapper = createMeetingMapper;
+    }
 
     public List<MeetingModel> getAll() {
         List<MeetingModel> models = meetingRepository.getAll()

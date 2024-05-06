@@ -1,6 +1,7 @@
 package repositories;
 
 import entity.CommentLike;
+import utils.BaseConnectionManager;
 import utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -9,12 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CommentLikeRepository {
+    public final BaseConnectionManager connectionManager;
     private static final String ADD_LIKE = "INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)";
     private static final String DELETE_LIKE = "DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?";
     private static final String GET_LIKES_COUNT = "SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?";
 
+    public CommentLikeRepository(BaseConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
     public CommentLike create(CommentLike like) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(ADD_LIKE)) {
 
             preparedStatement.setLong(1, like.getComment().getCommentId());
@@ -29,7 +35,7 @@ public class CommentLikeRepository {
     }
 
     public boolean delete(CommentLike like) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_LIKE)) {
 
             preparedStatement.setLong(1, like.getComment().getCommentId());
@@ -42,7 +48,7 @@ public class CommentLikeRepository {
     }
 
     public int getLikesCount(Long commentId) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_LIKES_COUNT)) {
 
             preparedStatement.setLong(1, commentId);

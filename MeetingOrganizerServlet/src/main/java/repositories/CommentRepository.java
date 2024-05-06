@@ -3,6 +3,7 @@ package repositories;
 import entity.Comment;
 import entity.Meeting;
 import entity.User;
+import utils.BaseConnectionManager;
 import utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CommentRepository implements Repository<Long, Comment> {
+    public final BaseConnectionManager connectionManager;
     private static final String CREATE_COMMENT = "INSERT INTO comments (text, creation_date, user_id, meeting_id) " +
             "VALUES (?, ?, ?, ?)";
     private static final String GET_ALL_COMMENTS = "SELECT comment_id, text, creation_date, user_id, meeting_id " +
@@ -32,14 +34,15 @@ public class CommentRepository implements Repository<Long, Comment> {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
 
-    public CommentRepository(UserRepository userRepository, MeetingRepository meetingRepository) {
+    public CommentRepository(BaseConnectionManager connectionManager, UserRepository userRepository, MeetingRepository meetingRepository) {
+        this.connectionManager = connectionManager;
         this.userRepository = userRepository;
         this.meetingRepository = meetingRepository;
     }
 
     @Override
     public Comment create(Comment comment) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(CREATE_COMMENT, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(comment, preparedStatement);
@@ -60,7 +63,7 @@ public class CommentRepository implements Repository<Long, Comment> {
     @Override
     public List<Comment> getAll() {
         List<Comment> comments = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_COMMENTS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -76,7 +79,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
     public List<Comment> getAllByMeetingId(Long meetingId) {
         List<Comment> comments = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_MEETING_ID)) {
 
             preparedStatement.setLong(1, meetingId);
@@ -94,7 +97,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
     @Override
     public Optional<Comment> getById(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_COMMENT_BY_ID)) {
 
             preparedStatement.setLong(1, id);
@@ -112,7 +115,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
     @Override
     public boolean update(Comment comment) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_COMMENT)) {
 
             setStatement(comment, preparedStatement);
@@ -125,7 +128,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_COMMENT)) {
 
             preparedStatement.setLong(1, id);

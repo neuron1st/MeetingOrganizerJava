@@ -1,6 +1,7 @@
 package repositories;
 
 import entity.User;
+import utils.BaseConnectionManager;
 import utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserRepository implements Repository<Long, User> {
+    public final BaseConnectionManager connectionManager;
     private static final String CREATE_USER = "INSERT INTO users (name, email, password) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_USERS = "SELECT user_id, name, email, password FROM users";
@@ -27,13 +29,17 @@ public class UserRepository implements Repository<Long, User> {
             "WHERE user_id = ?";
     private static final String DELETE_USER = "DELETE FROM users WHERE user_id = ?";
 
+    public UserRepository(BaseConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
     @Override
     public User create(User user) throws IllegalArgumentException {
         if (getByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("User with this email already exists");
         }
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(CREATE_USER, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(user, preparedStatement);
@@ -54,7 +60,7 @@ public class UserRepository implements Repository<Long, User> {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -70,7 +76,7 @@ public class UserRepository implements Repository<Long, User> {
 
     @Override
     public Optional<User> getById(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_ID)) {
 
             preparedStatement.setLong(1, id);
@@ -87,7 +93,7 @@ public class UserRepository implements Repository<Long, User> {
     }
 
     public Optional<User> getByEmail(String email) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_EMAIL)) {
 
             preparedStatement.setString(1, email);
@@ -104,7 +110,7 @@ public class UserRepository implements Repository<Long, User> {
     }
 
     public Optional<User> getByEmailAndPassword(String email, String password) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_EMAIL_PASSWORD)) {
 
             preparedStatement.setString(1, email);
@@ -123,10 +129,11 @@ public class UserRepository implements Repository<Long, User> {
 
     @Override
     public boolean update(User user) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)) {
 
             setStatement(user, preparedStatement);
+            preparedStatement.setLong(4, user.getUserId());
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -136,7 +143,7 @@ public class UserRepository implements Repository<Long, User> {
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER)) {
 
             preparedStatement.setLong(1, id);

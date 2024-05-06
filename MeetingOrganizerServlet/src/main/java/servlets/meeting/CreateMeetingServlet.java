@@ -10,8 +10,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mappers.meeting.CreateMeetingMapper;
+import mappers.meeting.MeetingMapper;
+import mappers.participant.CreateParticipantMapper;
+import mappers.participant.ParticipantMapper;
+import repositories.CommentRepository;
+import repositories.MeetingLikeRepository;
+import repositories.MeetingRepository;
+import repositories.ParticipantRepository;
+import repositories.UserRepository;
 import services.MeetingService;
 import services.ParticipantService;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 import utils.JspPathCreator;
 import validators.MeetingValidator;
 
@@ -24,10 +35,27 @@ import static utils.UrlPathGetter.MEETINGS;
 
 @WebServlet(MEETINGS + CREATE_MEETING)
 public class CreateMeetingServlet extends HttpServlet {
-    private final MeetingService meetingService = new MeetingService();
-    private final ParticipantService participantService = new ParticipantService();
+    private MeetingService meetingService;
+    private ParticipantService participantService;
 
     private final MeetingValidator meetingValidator = new MeetingValidator();
+    @Override
+    public void init() {
+        BaseConnectionManager connectionManager = new ConnectionManager();
+        UserRepository userRepository = new UserRepository(connectionManager);
+        MeetingRepository meetingRepository = new MeetingRepository(connectionManager);
+        CommentRepository commentRepository = new CommentRepository(connectionManager, userRepository, meetingRepository);
+        ParticipantRepository participantRepository = new ParticipantRepository(connectionManager, userRepository, meetingRepository);
+        MeetingLikeRepository meetingLikeRepository = new MeetingLikeRepository(connectionManager);
+        ParticipantMapper participantMapper = new ParticipantMapper();
+        CreateParticipantMapper createParticipantMapper = new CreateParticipantMapper();
+        MeetingMapper meetingMapper = new MeetingMapper();
+        CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();
+
+        participantService = new ParticipantService(participantRepository, participantMapper, createParticipantMapper);
+
+        meetingService = new MeetingService(meetingRepository, commentRepository, participantRepository, meetingLikeRepository, meetingMapper, createMeetingMapper);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

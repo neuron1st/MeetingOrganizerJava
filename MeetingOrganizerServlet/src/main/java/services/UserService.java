@@ -12,9 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserService {
-    private final UserRepository userRepository = new UserRepository();
-    private final UserMapper userMapper = new UserMapper();
-    private final CreateUserMapper createUserMapper = new CreateUserMapper();
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final CreateUserMapper createUserMapper;
+
+    public UserService(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            CreateUserMapper createUserMapper
+    ) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.createUserMapper = createUserMapper;
+    }
 
     public List<UserModel> getAll() {
         return userRepository.getAll()

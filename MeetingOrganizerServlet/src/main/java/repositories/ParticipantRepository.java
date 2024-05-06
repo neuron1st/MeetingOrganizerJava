@@ -4,6 +4,7 @@ import entity.Meeting;
 import entity.Participant;
 import entity.Role;
 import entity.User;
+import utils.BaseConnectionManager;
 import utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ParticipantRepository implements Repository<Long, Participant> {
+public class ParticipantRepository {
+    public final BaseConnectionManager connectionManager;
     private static final String ADD_PARTICIPANT = "INSERT INTO participants (meeting_id, user_id, role) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_PARTICIPANTS = "SELECT meeting_id, user_id, role " +
@@ -32,14 +34,15 @@ public class ParticipantRepository implements Repository<Long, Participant> {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
 
-    public ParticipantRepository(UserRepository userRepository, MeetingRepository meetingRepository) {
+    public ParticipantRepository(BaseConnectionManager connectionManager, UserRepository userRepository, MeetingRepository meetingRepository) {
+        this.connectionManager = connectionManager;
         this.userRepository = userRepository;
         this.meetingRepository = meetingRepository;
     }
 
-    @Override
+
     public Participant create(Participant participant) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(ADD_PARTICIPANT)) {
 
             setStatement(participant, preparedStatement);
@@ -52,10 +55,10 @@ public class ParticipantRepository implements Repository<Long, Participant> {
         }
     }
 
-    @Override
+
     public List<Participant> getAll() {
         List<Participant> participants = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_PARTICIPANTS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -71,7 +74,7 @@ public class ParticipantRepository implements Repository<Long, Participant> {
 
     public List<Participant> getAllByMeetingId(Long meetingId) {
         List<Participant> participants = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_MEETING_ID)) {
 
             preparedStatement.setLong(1, meetingId);
@@ -89,7 +92,7 @@ public class ParticipantRepository implements Repository<Long, Participant> {
 
     public List<Participant> getAllByUserId(Long userId) {
         List<Participant> participants = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BY_USER_ID)) {
 
             preparedStatement.setLong(1, userId);
@@ -105,14 +108,9 @@ public class ParticipantRepository implements Repository<Long, Participant> {
         return participants;
     }
 
-    @Override
-    public Optional<Participant> getById(Long id) {
-        throw new UnsupportedOperationException("Getting a participant by ID is not supported. " +
-                "Use the composite key (meeting_id, user_id).");
-    }
 
     public Optional<Participant> getById(Long meetingId, Long userId) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_PARTICIPANT_BY_ID)) {
 
             preparedStatement.setLong(1, meetingId);
@@ -130,12 +128,14 @@ public class ParticipantRepository implements Repository<Long, Participant> {
     }
 
 
-    @Override
+
     public boolean update(Participant participant) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PARTICIPANT)) {
 
-            setStatement(participant, preparedStatement);
+            preparedStatement.setString(1, participant.getRole().name());
+            preparedStatement.setLong(2, participant.getMeeting().getMeetingId());
+            preparedStatement.setLong(3, participant.getUser().getUserId());
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -143,14 +143,9 @@ public class ParticipantRepository implements Repository<Long, Participant> {
         }
     }
 
-    @Override
-    public boolean delete(Long id) {
-        throw new UnsupportedOperationException("Deleting a participant by ID is not supported. " +
-                "Use the composite key (meeting_id, user_id).");
-    }
 
     public boolean delete(Long meetingId, Long userId) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PARTICIPANT)) {
 
             preparedStatement.setLong(1, meetingId);

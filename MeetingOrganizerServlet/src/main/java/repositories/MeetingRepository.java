@@ -1,6 +1,7 @@
 package repositories;
 
 import entity.Meeting;
+import utils.BaseConnectionManager;
 import utils.ConnectionManager;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class MeetingRepository implements Repository<Long, Meeting> {
+    public final BaseConnectionManager connectionManager;
     private static final String CREATE_MEETING = "INSERT INTO meetings (title, description, event_date) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_MEETINGS = "SELECT meeting_id, title, description, event_date " +
@@ -27,9 +29,13 @@ public class MeetingRepository implements Repository<Long, Meeting> {
     private static final String GET_BY_TITLE = "SELECT meeting_id, title, description, event_date " +
             "FROM meetings WHERE title LIKE ?";
 
+    public MeetingRepository(BaseConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
     @Override
     public Meeting create(Meeting meeting) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(CREATE_MEETING, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(meeting, preparedStatement);
@@ -50,7 +56,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
     @Override
     public List<Meeting> getAll() {
         List<Meeting> meetings = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_MEETINGS, Statement.RETURN_GENERATED_KEYS)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -66,7 +72,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
     public List<Meeting> getByTitle(String title) {
         List<Meeting> meetings = new ArrayList<>();
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_BY_TITLE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, "%" + title + "%");
             ResultSet resultSet = statement.executeQuery();
@@ -81,7 +87,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
     @Override
     public Optional<Meeting> getById(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_MEETING_BY_ID, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setLong(1, id);
@@ -99,10 +105,11 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
     @Override
     public boolean update(Meeting meeting) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_MEETING)) {
 
             setStatement(meeting, preparedStatement);
+            preparedStatement.setLong(4, meeting.getMeetingId());
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -112,7 +119,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_MEETING)) {
 
             preparedStatement.setLong(1, id);

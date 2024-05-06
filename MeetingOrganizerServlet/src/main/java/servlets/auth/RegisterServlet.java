@@ -6,7 +6,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mappers.user.CreateUserMapper;
+import mappers.user.UserMapper;
+import repositories.UserRepository;
 import services.UserService;
+import utils.ConnectionManager;
 import utils.JspPathCreator;
 import validators.UserValidator;
 
@@ -17,7 +21,11 @@ import static utils.UrlPathGetter.REGISTRATION;
 
 @WebServlet(REGISTRATION)
 public class RegisterServlet extends HttpServlet {
-    private final UserService userService = new UserService();
+    private final UserService userService = new UserService(
+            new UserRepository(new ConnectionManager()),
+            new UserMapper(),
+            new CreateUserMapper()
+    );
     private final UserValidator userValidator = new UserValidator();
 
     @Override

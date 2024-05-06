@@ -7,14 +7,25 @@ import mappers.participant.ParticipantMapper;
 import repositories.MeetingRepository;
 import repositories.ParticipantRepository;
 import repositories.UserRepository;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 
 import java.util.List;
 
 public class ParticipantService {
-    private final ParticipantRepository participantRepository = new ParticipantRepository(new UserRepository(), new MeetingRepository());
+    private final ParticipantRepository participantRepository;
+    private final ParticipantMapper participantMapper;
+    private final CreateParticipantMapper createParticipantMapper;
 
-    private final ParticipantMapper participantMapper = new ParticipantMapper();
-    private final CreateParticipantMapper createParticipantMapper = new CreateParticipantMapper();
+    public ParticipantService(
+            ParticipantRepository participantRepository,
+            ParticipantMapper participantMapper,
+            CreateParticipantMapper createParticipantMapper
+    ) {
+        this.participantRepository = participantRepository;
+        this.participantMapper = participantMapper;
+        this.createParticipantMapper = createParticipantMapper;
+    }
 
     public List<ParticipantModel> getAll() {
         return participantRepository.getAll()

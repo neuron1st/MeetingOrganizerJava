@@ -7,10 +7,13 @@ import entity.User;
 import mappers.BaseMapper;
 import repositories.MeetingRepository;
 import repositories.UserRepository;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 
 public class CreateParticipantMapper implements BaseMapper<CreateParticipantModel, Participant> {
-    private final UserRepository userRepository = new UserRepository();
-    private final MeetingRepository meetingRepository = new MeetingRepository();
+    private final BaseConnectionManager connectionManager = new ConnectionManager();
+    private final UserRepository userRepository = new UserRepository(connectionManager);
+    private final MeetingRepository meetingRepository = new MeetingRepository(connectionManager);
 
     @Override
     public Participant map(CreateParticipantModel source) {

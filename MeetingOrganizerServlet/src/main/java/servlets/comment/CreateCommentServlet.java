@@ -7,7 +7,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mappers.comment.CommentMapper;
+import mappers.comment.CreateCommentMapper;
+import repositories.CommentLikeRepository;
+import repositories.CommentRepository;
+import repositories.MeetingRepository;
+import repositories.UserRepository;
 import services.CommentService;
+import utils.BaseConnectionManager;
+import utils.ConnectionManager;
 import utils.JspPathCreator;
 import validators.CommentValidator;
 
@@ -18,8 +26,22 @@ import static utils.UrlPathGetter.*;
 
 @WebServlet(MEETINGS + CREATE_COMMENT)
 public class CreateCommentServlet extends HttpServlet {
-    private final CommentService commentService = new CommentService();
+    private CommentService commentService;
     private final CommentValidator commentValidator = new CommentValidator();
+
+    @Override
+    public void init() {
+        BaseConnectionManager connectionManager = new ConnectionManager();
+        UserRepository userRepository = new UserRepository(connectionManager);
+        MeetingRepository meetingRepository = new MeetingRepository(connectionManager);
+
+        CommentRepository commentRepository = new CommentRepository(connectionManager, userRepository, meetingRepository);
+        CommentLikeRepository commentLikeRepository = new CommentLikeRepository(connectionManager);
+        CommentMapper commentMapper = new CommentMapper();
+        CreateCommentMapper createCommentMapper = new CreateCommentMapper();
+
+        commentService = new CommentService(commentRepository, commentLikeRepository, commentMapper, createCommentMapper);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
