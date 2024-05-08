@@ -3,10 +3,7 @@ package services;
 import entity.CommentLike;
 import repositories.CommentLikeRepository;
 import repositories.CommentRepository;
-import repositories.MeetingRepository;
 import repositories.UserRepository;
-import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 public class CommentLikeService {
     private final CommentLikeRepository commentLikeRepository;
@@ -24,7 +21,7 @@ public class CommentLikeService {
     }
 
 
-    public void addLike(Long userId, Long commentId) {
+    public void addLike(long userId, long commentId) {
         commentLikeRepository.create(CommentLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
@@ -33,7 +30,7 @@ public class CommentLikeService {
                 .build());
     }
 
-    public void removeLike(Long userId, Long commentId) {
+    public void removeLike(long userId, long commentId) {
         commentLikeRepository.delete(CommentLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))

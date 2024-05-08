@@ -4,7 +4,6 @@ import entity.Comment;
 import entity.Meeting;
 import entity.User;
 import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -119,6 +118,7 @@ public class CommentRepository implements Repository<Long, Comment> {
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_COMMENT)) {
 
             setStatement(comment, preparedStatement);
+            preparedStatement.setLong(5, comment.getCommentId());
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {

@@ -4,8 +4,6 @@ import entity.MeetingLike;
 import repositories.MeetingLikeRepository;
 import repositories.MeetingRepository;
 import repositories.UserRepository;
-import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 public class MeetingLikeService {
     private final MeetingLikeRepository meetingLikeRepository;
@@ -23,7 +21,7 @@ public class MeetingLikeService {
     }
 
 
-    public void addLike(Long userId, Long meetingId) {
+    public void addLike(long userId, long meetingId) {
         meetingLikeRepository.create(MeetingLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))
@@ -32,7 +30,7 @@ public class MeetingLikeService {
                 .build());
     }
 
-    public void removeLike(Long userId, Long meetingId) {
+    public void removeLike(long userId, long meetingId) {
         meetingLikeRepository.delete(MeetingLike.builder()
                 .user(userRepository.getById(userId)
                         .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId)))

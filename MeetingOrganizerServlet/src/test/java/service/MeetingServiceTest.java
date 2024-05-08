@@ -5,11 +5,11 @@ import dto.meeting.MeetingModel;
 import entity.Meeting;
 import mappers.meeting.CreateMeetingMapper;
 import mappers.meeting.MeetingMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import repositories.CommentRepository;
 import repositories.MeetingLikeRepository;
@@ -18,12 +18,11 @@ import repositories.ParticipantRepository;
 import services.MeetingService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -39,20 +38,20 @@ public class MeetingServiceTest {
     private ParticipantRepository participantRepository;
     @Mock
     private MeetingLikeRepository meetingLikeRepository;
-    @Mock
-    private MeetingMapper meetingMapper;
-    @Mock
-    private CreateMeetingMapper createMeetingMapper;
+    @Spy
+    private MeetingMapper meetingMapper = new MeetingMapper();
+    @Spy
+    private CreateMeetingMapper createMeetingMapper = new CreateMeetingMapper();
 
     @InjectMocks
     private MeetingService meetingService;
 
-    private static MeetingModel getMeetingModel() {
+    private static MeetingModel getMeetingModel(Meeting meeting) {
         return MeetingModel.builder()
-                .meetingId(1)
-                .title("Test")
-                .description("Test desc")
-                .date(LocalDateTime.now())
+                .meetingId(meeting.getMeetingId())
+                .title(meeting.getTitle())
+                .description(meeting.getDescription())
+                .date(meeting.getDate())
                 .commentCount(0)
                 .likeCount(0)
                 .participantCount(0)
@@ -71,93 +70,96 @@ public class MeetingServiceTest {
     @Test
     public void testGetAll() {
         Meeting meeting = getMeeting();
-        List<Meeting> meetings = List.of(meeting);
-        MeetingModel meetingModel = getMeetingModel();
+        MeetingModel meetingModel = getMeetingModel(meeting);
 
-        when(meetingRepository.getAll()).thenReturn(meetings);
-        when(meetingMapper.map(any())).thenReturn(meetingModel);
+        when(meetingRepository.getAll()).thenReturn(List.of(meeting));
+        when(meetingLikeRepository.getLikesCount(anyLong())).thenReturn(0);
+        when(commentRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
+        when(participantRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
 
-        Assertions.assertEquals(meetingService.getAll().size(), 1);
-        Assertions.assertEquals(meetingService.getAll().get(0).getMeetingId(), meetingModel.getMeetingId());
+        List<MeetingModel> actualModels = meetingService.getAll();
+
+        assertEquals(1, actualModels.size());
+        assertMeetingEquals(meetingModel, actualModels.get(0));
     }
 
     @Test
     public void testGetByTitle() {
         Meeting meeting = getMeeting();
-        List<Meeting> meetings = List.of(meeting);
+        MeetingModel meetingModel = getMeetingModel(meeting);
 
-        MeetingModel meetingModel = getMeetingModel();
-        List<MeetingModel> expectedModels = List.of(meetingModel);
-
-        when(meetingRepository.getByTitle(meeting.getTitle())).thenReturn(meetings);
-        when(meetingMapper.map(any())).thenReturn(meetingModel);
+        when(meetingRepository.getByTitle(any())).thenReturn(List.of(meeting));
+        when(meetingLikeRepository.getLikesCount(anyLong())).thenReturn(0);
+        when(commentRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
+        when(participantRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
 
         List<MeetingModel> actualModels = meetingService.getByTitle(meeting.getTitle());
 
-        Assertions.assertEquals(expectedModels.size(), actualModels.size());
-        Assertions.assertEquals(expectedModels.get(0), actualModels.get(0));
+        assertEquals(1, actualModels.size());
+        assertMeetingEquals(meetingModel, actualModels.get(0));
     }
 
     @Test
     public void testGetById() {
-        long meetingId = 1L;
         Meeting meeting = getMeeting();
-        MeetingModel meetingModel = getMeetingModel();
+        MeetingModel meetingModel = getMeetingModel(meeting);
+        long meetingId = meeting.getMeetingId();
 
-        when(meetingRepository.getById(meetingId)).thenReturn(Optional.of(meeting));
+        when(meetingRepository.getById(any())).thenReturn(Optional.of(meeting));
         when(meetingLikeRepository.getLikesCount(anyLong())).thenReturn(0);
-        when(commentRepository.getAllByMeetingId(anyLong())).thenReturn(new ArrayList<>());
-        when(participantRepository.getAllByMeetingId(anyLong())).thenReturn(new ArrayList<>());
-        when(meetingMapper.map(meeting)).thenReturn(meetingModel);
+        when(commentRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
+        when(participantRepository.getAllByMeetingId(anyLong())).thenReturn(Collections.emptyList());
 
-        Assertions.assertTrue(meetingService.getById(meetingId).isPresent());
-        Assertions.assertEquals(meetingService.getById(meetingId).get().getMeetingId(), meetingModel.getMeetingId());
+        Optional<MeetingModel> actual = meetingService.getById(meetingId);
+
+        assertTrue(actual.isPresent());
+        assertMeetingEquals(meetingModel, actual.get());
     }
 
     @Test
     public void testCreate() {
-        CreateMeetingModel createModel = CreateMeetingModel.builder()
-                .title("Test")
-                .description("Test desc")
-                .build();
         Meeting meeting = getMeeting();
-        MeetingModel meetingModel = getMeetingModel();
+        MeetingModel meetingModel = getMeetingModel(meeting);
+        CreateMeetingModel createModel = CreateMeetingModel.builder()
+                .title(meeting.getTitle())
+                .description(meeting.getDescription())
+                .build();
 
-        when(createMeetingMapper.map(createModel)).thenReturn(meeting);
-        when(meetingRepository.create(meeting)).thenReturn(meeting);
-        when(meetingMapper.map(meeting)).thenReturn(meetingModel);
+        when(meetingRepository.create(any())).thenReturn(meeting);
 
-        Assertions.assertEquals(meetingService.create(createModel).getMeetingId(), meetingModel.getMeetingId());
+        MeetingModel actual = meetingService.create(createModel);
+
+        assertMeetingEquals(meetingModel, actual);
     }
 
     @Test
     public void testUpdate() {
+        Meeting meeting = getMeeting();
         CreateMeetingModel createModel = CreateMeetingModel.builder()
                 .title("Test")
                 .description("Test desc")
+                .date(LocalDateTime.now())
                 .build();
-        Meeting meeting = getMeeting();
-        MeetingModel meetingModel = getMeetingModel();
 
-        when(createMeetingMapper.map(createModel)).thenReturn(meeting);
+        when(meetingRepository.getById(meeting.getMeetingId())).thenReturn(Optional.of(meeting));
         when(meetingRepository.update(meeting)).thenReturn(true);
 
-        Assertions.assertTrue(meetingService.update(createModel));
+        assertTrue(meetingService.update(meeting.getMeetingId(), createModel));
     }
 
     @Test
     public void testDelete() {
-        Long meetingId = 1L;
+        long meetingId = 1L;
         when(meetingRepository.delete(meetingId)).thenReturn(true);
 
-        Assertions.assertTrue(meetingService.delete(meetingId));
+        assertTrue(meetingService.delete(meetingId));
     }
 
     @Test
     public void testGetAllWhenNoMeetings() {
         when(meetingRepository.getAll()).thenReturn(Collections.emptyList());
 
-        Assertions.assertTrue(meetingService.getAll().isEmpty());
+        assertTrue(meetingService.getAll().isEmpty());
     }
 
     @Test
@@ -165,6 +167,16 @@ public class MeetingServiceTest {
         long nonExistentMeetingId = 999L;
         when(meetingRepository.getById(nonExistentMeetingId)).thenReturn(Optional.empty());
 
-        Assertions.assertFalse(meetingService.getById(nonExistentMeetingId).isPresent());
+        assertFalse(meetingService.getById(nonExistentMeetingId).isPresent());
+    }
+
+    private void assertMeetingEquals(MeetingModel expected, MeetingModel actual) {
+        assertEquals(expected.getMeetingId(), actual.getMeetingId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getDate(), actual.getDate());
+        assertEquals(expected.getCommentCount(), actual.getCommentCount());
+        assertEquals(expected.getLikeCount(), actual.getLikeCount());
+        assertEquals(expected.getParticipantCount(), actual.getParticipantCount());
     }
 }

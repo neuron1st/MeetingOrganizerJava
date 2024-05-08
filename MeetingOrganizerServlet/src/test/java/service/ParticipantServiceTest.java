@@ -1,29 +1,27 @@
 package service;
 
-import dto.meeting.MeetingModel;
 import dto.participant.CreateParticipantModel;
 import dto.participant.ParticipantModel;
-import dto.user.UserModel;
 import entity.Meeting;
 import entity.Participant;
 import entity.Role;
 import entity.User;
 import mappers.participant.CreateParticipantMapper;
 import mappers.participant.ParticipantMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import repositories.ParticipantRepository;
 import services.ParticipantService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +30,10 @@ public class ParticipantServiceTest {
 
     @Mock
     private ParticipantRepository participantRepository;
-    @Mock
-    private ParticipantMapper participantMapper;
-    @Mock
-    private CreateParticipantMapper createParticipantMapper;
+    @Spy
+    private ParticipantMapper participantMapper = new ParticipantMapper();
+    @Spy
+    private CreateParticipantMapper createParticipantMapper = new CreateParticipantMapper();
 
     @InjectMocks
     private ParticipantService participantService;
@@ -43,7 +41,7 @@ public class ParticipantServiceTest {
 
     private static Meeting getMeeting() {
         return Meeting.builder()
-                .meetingId(1)
+                .meetingId(1L)
                 .title("Test")
                 .description("Test desc")
                 .date(LocalDateTime.now())
@@ -58,53 +56,61 @@ public class ParticipantServiceTest {
                 .build();
     }
 
+    private static Participant getParticipant() {
+        return Participant.builder()
+                .meeting(getMeeting())
+                .user(getUser())
+                .role(Role.Participant)
+                .build();
+    }
+
+    private static ParticipantModel getParticipantModel() {
+        return ParticipantModel.builder()
+                .meetingName(getMeeting().getTitle())
+                .userName(getUser().getFullName())
+                .role(Role.Participant)
+                .build();
+    }
+
     @Test
     public void testGetAll() {
-        List<Participant> participants = new ArrayList<>();
-        participants.add(Participant.builder().build());
+        Participant participant = getParticipant();
+        ParticipantModel participantModel = getParticipantModel();
 
-        when(participantRepository.getAll()).thenReturn(participants);
-        when(participantMapper.map(any())).thenReturn(ParticipantModel.builder().build());
+        when(participantRepository.getAll()).thenReturn(List.of(participant));
 
-        Assertions.assertFalse(participantService.getAll().isEmpty());
+        List<ParticipantModel> participantModels = participantService.getAll();
+
+        assertEquals(1, participantModels.size());
+        assertParticipantsEquals(participantModel, participantModels.get(0));
     }
 
     @Test
     public void testGetAllByMeetingId() {
-        long meetingId = 1L;
-        List<Participant> participants = new ArrayList<>();
-        participants.add(Participant.builder().build());
+        Participant participant = getParticipant();
+        ParticipantModel participantModel = getParticipantModel();
+        long meetingId = participant.getMeeting().getMeetingId();
 
-        when(participantRepository.getAllByMeetingId(meetingId)).thenReturn(participants);
-        when(participantMapper.map(any())).thenReturn(ParticipantModel.builder().build());
+        when(participantRepository.getAllByMeetingId(meetingId)).thenReturn(List.of(participant));
 
-        Assertions.assertFalse(participantService.getAllByMeetingId(meetingId).isEmpty());
-    }
+        List<ParticipantModel> participantModels = participantService.getAllByMeetingId(meetingId);
+
+        assertEquals(1, participantModels.size());
+        assertParticipantsEquals(participantModel, participantModels.get(0));    }
 
     @Test
     public void testCreate() {
+        Participant participant = getParticipant();
+        ParticipantModel participantModel = getParticipantModel();
         CreateParticipantModel createModel = CreateParticipantModel.builder()
-                .userId(1L)
-                .meetingId(1L)
-                .role(Role.Participant)
+                .userId(participant.getUser().getUserId())
+                .meetingId(participant.getMeeting().getMeetingId())
+                .role(participant.getRole())
                 .build();
 
-        Participant participant = Participant.builder()
-                .user(getUser())
-                .meeting(getMeeting())
-                .role(Role.Participant)
-                .build();
-
-        ParticipantModel participantModel = ParticipantModel.builder()
-                .userName(getUser().getFullName())
-                .meetingName(getMeeting().getTitle())
-                .build();
-
-        when(createParticipantMapper.map(createModel)).thenReturn(participant);
         when(participantRepository.create(any())).thenReturn(participant);
-        when(participantMapper.map(any())).thenReturn(participantModel);
 
-        Assertions.assertEquals(participantService.create(createModel), participantModel);
+        assertParticipantsEquals(participantModel, participantService.create(createModel));
     }
 
     @Test
@@ -113,14 +119,14 @@ public class ParticipantServiceTest {
         long userId = 1L;
         when(participantRepository.delete(meetingId, userId)).thenReturn(true);
 
-        Assertions.assertTrue(participantService.delete(meetingId, userId));
+        assertTrue(participantService.delete(meetingId, userId));
     }
 
     @Test
     public void testGetAllWhenNoParticipants() {
         when(participantRepository.getAll()).thenReturn(Collections.emptyList());
 
-        Assertions.assertTrue(participantService.getAll().isEmpty());
+        assertTrue(participantService.getAll().isEmpty());
     }
 
     @Test
@@ -128,7 +134,7 @@ public class ParticipantServiceTest {
         long meetingId = 1L;
         when(participantRepository.getAllByMeetingId(meetingId)).thenReturn(Collections.emptyList());
 
-        Assertions.assertTrue(participantService.getAllByMeetingId(meetingId).isEmpty());
+        assertTrue(participantService.getAllByMeetingId(meetingId).isEmpty());
     }
 
     @Test
@@ -136,7 +142,7 @@ public class ParticipantServiceTest {
         long userId = 1L;
         when(participantRepository.getAllByMeetingId(userId)).thenReturn(Collections.emptyList());
 
-        Assertions.assertTrue(participantService.getAllByUserId(userId).isEmpty());
+        assertTrue(participantService.getAllByUserId(userId).isEmpty());
     }
 
     @Test
@@ -146,6 +152,12 @@ public class ParticipantServiceTest {
 
         when(participantRepository.delete(nonExistentMeetingId, nonExistentUserId)).thenReturn(false);
 
-        Assertions.assertFalse(participantService.delete(nonExistentMeetingId, nonExistentUserId));
+        assertFalse(participantService.delete(nonExistentMeetingId, nonExistentUserId));
+    }
+
+    private void assertParticipantsEquals(ParticipantModel expected, ParticipantModel actual) {
+        assertEquals(expected.getUserName(), actual.getUserName());
+        assertEquals(expected.getMeetingName(), actual.getMeetingName());
+        assertEquals(expected.getRole(), actual.getRole());
     }
 }

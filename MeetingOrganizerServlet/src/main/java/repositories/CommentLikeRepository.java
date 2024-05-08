@@ -2,7 +2,6 @@ package repositories;
 
 import entity.CommentLike;
 import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -47,7 +46,7 @@ public class CommentLikeRepository {
         }
     }
 
-    public int getLikesCount(Long commentId) {
+    public int getLikesCount(long commentId) {
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_LIKES_COUNT)) {
 

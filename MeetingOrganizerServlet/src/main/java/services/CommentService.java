@@ -2,14 +2,11 @@ package services;
 
 import dto.comment.CommentModel;
 import dto.comment.CreateCommentModel;
+import entity.Comment;
 import mappers.comment.CommentMapper;
 import mappers.comment.CreateCommentMapper;
 import repositories.CommentLikeRepository;
 import repositories.CommentRepository;
-import repositories.MeetingRepository;
-import repositories.UserRepository;
-import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +43,7 @@ public class CommentService {
         return models;
     }
 
-    public List<CommentModel> getByMeetingId(Long meetingId) {
+    public List<CommentModel> getByMeetingId(long meetingId) {
         List<CommentModel> models = commentRepository.getAllByMeetingId(meetingId)
                 .stream()
                 .map(commentMapper::map)
@@ -59,7 +56,7 @@ public class CommentService {
         return models;
     }
 
-    public Optional<CommentModel> getById(Long commentId) {
+    public Optional<CommentModel> getById(long commentId) {
         CommentModel model = commentRepository.getById(commentId)
                 .map(commentMapper::map)
                 .orElse(null);
@@ -77,11 +74,20 @@ public class CommentService {
         return commentMapper.map(commentRepository.create(createCommentMapper.map(createModel)));
     }
 
-    public boolean update(CreateCommentModel createModel) {
-        return commentRepository.update(createCommentMapper.map(createModel));
+    public boolean update(long commentId, CreateCommentModel createModel) {
+        Optional<Comment> commentOpt = commentRepository.getById(commentId);
+
+        if (commentOpt.isEmpty()) {
+            return false;
+        }
+
+        Comment comment = commentOpt.get();
+        comment.setText(createModel.getText());
+
+        return commentRepository.update(comment);
     }
 
-    public boolean delete(Long commentId) {
+    public boolean delete(long commentId) {
         return commentRepository.delete(commentId);
     }
 }

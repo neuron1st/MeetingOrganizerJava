@@ -33,7 +33,7 @@ public class UserService {
                 .toList();
     }
 
-    public Optional<UserModel> getById(Long userId) {
+    public Optional<UserModel> getById(long userId) {
         UserModel model = userRepository.getById(userId)
                 .map(userMapper::map)
                 .orElse(null);
@@ -74,11 +74,20 @@ public class UserService {
         return userMapper.map(userRepository.create(createUserMapper.map(createModel)));
     }
 
-    public boolean update(CreateUserModel createModel) {
-        return userRepository.update(createUserMapper.map(createModel));
+    public boolean update(long userId, CreateUserModel createModel) {
+        Optional<User> userOpt = userRepository.getById(userId);
+
+        if (userOpt.isEmpty())
+            return false;
+
+        User user = userOpt.get();
+        user.setEmail(createModel.getEmail());
+        user.setFullName(createModel.getFullName());
+
+        return userRepository.update(user);
     }
 
-    public boolean delete(Long userId) {
+    public boolean delete(long userId) {
         return userRepository.delete(userId);
     }
 }
