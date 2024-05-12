@@ -1,8 +1,9 @@
 package repositories;
 
 import entity.Meeting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 public class MeetingRepository implements Repository<Long, Meeting> {
     public final BaseConnectionManager connectionManager;
+    private static final Logger logger = LoggerFactory.getLogger(MeetingRepository.class);
     private static final String CREATE_MEETING = "INSERT INTO meetings (title, description, event_date) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_MEETINGS = "SELECT meeting_id, title, description, event_date " +
@@ -49,6 +51,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
             return meeting;
         } catch (SQLException e) {
+            logger.error("Failed to create meeting", e);
             throw new RuntimeException("Failed to create meeting", e);
         }
     }
@@ -65,6 +68,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get all meetings", e);
             throw new RuntimeException("Failed to get all meetings", e);
         }
         return meetings;
@@ -80,6 +84,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
                 meetings.add(mapResultSetToMeeting(resultSet));
             }
         } catch (SQLException e) {
+            logger.error("Failed to get meetings", e);
             throw new RuntimeException("Failed to get meetings", e);
         }
         return meetings;
@@ -99,6 +104,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get meeting by id", e);
             throw new RuntimeException("Failed to get meeting by id", e);
         }
     }
@@ -113,6 +119,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to update meeting", e);
             throw new RuntimeException("Failed to update meeting", e);
         }
     }
@@ -125,6 +132,7 @@ public class MeetingRepository implements Repository<Long, Meeting> {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to delete meeting", e);
             throw new RuntimeException("Failed to delete meeting", e);
         }
     }

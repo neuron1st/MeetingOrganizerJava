@@ -1,8 +1,9 @@
 package repositories;
 
 import entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.BaseConnectionManager;
-import utils.ConnectionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 public class UserRepository implements Repository<Long, User> {
     public final BaseConnectionManager connectionManager;
+    private static final Logger logger = LoggerFactory.getLogger(CommentLikeRepository.class);
     private static final String CREATE_USER = "INSERT INTO users (name, email, password) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_USERS = "SELECT user_id, name, email, password FROM users";
@@ -36,6 +38,7 @@ public class UserRepository implements Repository<Long, User> {
     @Override
     public User create(User user) throws IllegalArgumentException {
         if (getByEmail(user.getEmail()).isPresent()) {
+            logger.error("User with this email already exists");
             throw new IllegalArgumentException("User with this email already exists");
         }
 
@@ -53,6 +56,7 @@ public class UserRepository implements Repository<Long, User> {
 
             return user;
         } catch (SQLException e) {
+            logger.error("Failed to create user", e);
             throw new RuntimeException("Failed to create user", e);
         }
     }
@@ -69,6 +73,7 @@ public class UserRepository implements Repository<Long, User> {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get all users", e);
             throw new RuntimeException("Failed to get all users", e);
         }
         return users;
@@ -88,6 +93,7 @@ public class UserRepository implements Repository<Long, User> {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get user by id", e);
             throw new RuntimeException("Failed to get user by id", e);
         }
     }
@@ -105,6 +111,7 @@ public class UserRepository implements Repository<Long, User> {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get user by email", e);
             throw new RuntimeException("Failed to get user by email", e);
         }
     }
@@ -123,6 +130,7 @@ public class UserRepository implements Repository<Long, User> {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get user by email and password", e);
             throw new RuntimeException("Failed to get user by email and password", e);
         }
     }
@@ -137,6 +145,7 @@ public class UserRepository implements Repository<Long, User> {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to update user", e);
             throw new RuntimeException("Failed to update user", e);
         }
     }
@@ -149,6 +158,7 @@ public class UserRepository implements Repository<Long, User> {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to delete user", e);
             throw new RuntimeException("Failed to delete user", e);
         }
     }

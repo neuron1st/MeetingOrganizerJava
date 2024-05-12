@@ -3,6 +3,8 @@ package repositories;
 import entity.Comment;
 import entity.Meeting;
 import entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.BaseConnectionManager;
 
 import java.sql.Connection;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 public class CommentRepository implements Repository<Long, Comment> {
     public final BaseConnectionManager connectionManager;
+    private static final Logger logger = LoggerFactory.getLogger(CommentRepository.class);
     private static final String CREATE_COMMENT = "INSERT INTO comments (text, creation_date, user_id, meeting_id) " +
             "VALUES (?, ?, ?, ?)";
     private static final String GET_ALL_COMMENTS = "SELECT comment_id, text, creation_date, user_id, meeting_id " +
@@ -55,6 +58,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
             return comment;
         } catch (SQLException e) {
+            logger.error("Failed to create comment", e);
             throw new RuntimeException("Failed to create comment", e);
         }
     }
@@ -71,6 +75,7 @@ public class CommentRepository implements Repository<Long, Comment> {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get all comments", e);
             throw new RuntimeException("Failed to get all comments", e);
         }
         return comments;
@@ -89,6 +94,7 @@ public class CommentRepository implements Repository<Long, Comment> {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get all comments", e);
             throw new RuntimeException("Failed to get all comments", e);
         }
         return comments;
@@ -108,6 +114,7 @@ public class CommentRepository implements Repository<Long, Comment> {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get comment by id", e);
             throw new RuntimeException("Failed to get comment by id", e);
         }
     }
@@ -122,6 +129,7 @@ public class CommentRepository implements Repository<Long, Comment> {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to update comment", e);
             throw new RuntimeException("Failed to update comment", e);
         }
     }
@@ -134,6 +142,7 @@ public class CommentRepository implements Repository<Long, Comment> {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to delete comment", e);
             throw new RuntimeException("Failed to delete comment", e);
         }
     }

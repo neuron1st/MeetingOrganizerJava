@@ -4,6 +4,8 @@ import entity.Meeting;
 import entity.Participant;
 import entity.Role;
 import entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.BaseConnectionManager;
 
 import java.sql.Connection;
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 public class ParticipantRepository {
     public final BaseConnectionManager connectionManager;
+    private static final Logger logger = LoggerFactory.getLogger(ParticipantRepository.class);
     private static final String ADD_PARTICIPANT = "INSERT INTO participants (meeting_id, user_id, role) " +
             "VALUES (?, ?, ?)";
     private static final String GET_ALL_PARTICIPANTS = "SELECT meeting_id, user_id, role " +
@@ -50,6 +53,7 @@ public class ParticipantRepository {
 
             return participant;
         } catch (SQLException e) {
+            logger.error("Failed to add participant", e);
             throw new RuntimeException("Failed to add participant", e);
         }
     }
@@ -66,6 +70,7 @@ public class ParticipantRepository {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get all participants", e);
             throw new RuntimeException("Failed to get all participants", e);
         }
         return participants;
@@ -84,6 +89,7 @@ public class ParticipantRepository {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get participants", e);
             throw new RuntimeException("Failed to get participants", e);
         }
         return participants;
@@ -102,6 +108,7 @@ public class ParticipantRepository {
             }
 
         } catch (SQLException e) {
+            logger.error("Failed to get participants", e);
             throw new RuntimeException("Failed to get participants", e);
         }
         return participants;
@@ -122,6 +129,7 @@ public class ParticipantRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            logger.error("Failed to get participant by id", e);
             throw new RuntimeException("Failed to get participant by id", e);
         }
     }
@@ -136,6 +144,7 @@ public class ParticipantRepository {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to update participant", e);
             throw new RuntimeException("Failed to update participant", e);
         }
     }
@@ -150,6 +159,7 @@ public class ParticipantRepository {
 
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
+            logger.error("Failed to delete participant", e);
             throw new RuntimeException("Failed to delete participant", e);
         }
     }
